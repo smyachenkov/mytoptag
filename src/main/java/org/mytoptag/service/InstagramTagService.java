@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -52,7 +53,7 @@ public class InstagramTagService {
     this.instagramTagRepository = instagramTagRepository;
   }
 
-  public InstagramTag getExistingTag(String name) {
+  public InstagramTag getExistingTag(String name) throws ObjectNotFoundException {
     InstagramTag tag = instagramTagRepository.findByName(name);
     if (tag == null) {
       throw new ObjectNotFoundException();
@@ -60,17 +61,24 @@ public class InstagramTagService {
     return tag;
   }
 
-  public InstagramTag addTag(String name) {
-    InstagramTag existingTag = instagramTagRepository.findByName(name);
-    if (existingTag != null) {
-      return existingTag;
+  public List<InstagramTag> addTag(List<String> tags) {
+    List<InstagramTag> newTags = new ArrayList();
+    for (String tag : tags) {
+      InstagramTag existingTag = instagramTagRepository.findByName(tag);
+      if (existingTag != null) {
+        newTags.add(existingTag);
+      } else {
+        InstagramTag newTag = getTagFromWeb(tag);
+        if (newTag != null) {
+          newTags.add(instagramTagRepository.save(newTag));
+        }
+      }
     }
-    InstagramTag newTag = getTagFromWeb(name);
-    return instagramTagRepository.save(newTag);
+    return newTags;
   }
 
   public void updateAllTagHistory() {
-    instagramTagRepository.findAll().forEach(tag -> updateTagHistory(tag));
+    instagramTagRepository.findAll().forEach(this::updateTagHistory);
   }
 
   public void updateTagHistory(InstagramTag currentTag) {
@@ -84,11 +92,7 @@ public class InstagramTagService {
     name = name.startsWith(HASHTAG_SEARCH_START_SYMBOL) ? name : HASHTAG_SEARCH_START_SYMBOL + name;
 
     String responseJson = restTemplate.getForObject(INSTAGRAM_SEARCH_URL, String.class, name);
-    InstagramTag newTag = getTopTagFromJson(responseJson);
-    if (newTag == null) {
-      throw new ObjectNotFoundException();
-    }
-    return newTag;
+    return getTopTagFromJson(responseJson);
   }
 
   private InstagramTag getTopTagFromJson(String json) {
