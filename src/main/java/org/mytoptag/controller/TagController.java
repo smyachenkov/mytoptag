@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/tag", produces={"application/json"}, method = RequestMethod.GET)
 public class TagController {
@@ -48,7 +50,7 @@ public class TagController {
   }
 
   @RequestMapping(value = "/add/{name}", produces={"application/json"}, method = RequestMethod.GET)
-  public InstagramTag addTag(@PathVariable("name") String name) {
-    return instagramTagService.addTag(name);
+  public List<InstagramTag> addTag(@PathVariable("name") List<String> tags) {
+    return instagramTagService.addTag(tags);
   }
 }
