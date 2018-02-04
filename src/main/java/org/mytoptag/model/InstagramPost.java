@@ -24,33 +24,29 @@
 package org.mytoptag.model;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@Document(collection = "tags")
 @Data
-@NoArgsConstructor
-public class InstagramTag {
-  @Id
-  private String id;
-  private String name;
-  private Long ig_id;
-  private LinkedList<InstagramTagHistory> history;
+public class InstagramPost {
+  private Long id;
+  private String text;
+  private List<String> tags;
 
-  public InstagramTag(String name, Long count, Long ig_id) {
-    this.name = name.toLowerCase();
-    this.ig_id = ig_id;
-    LinkedList<InstagramTagHistory> tagHistory = new LinkedList();
-    tagHistory.add(new InstagramTagHistory(new Date(), count));
-    this.history = tagHistory;
+  public InstagramPost(Long id, String text) {
+    this.id = id;
+    this.text = text;
+    this.tags = tagsFromText(text);
   }
 
-  public InstagramTag(String name, Long ig_id) {
-    this.name = name.toLowerCase();
-    this.ig_id = ig_id;
+  private List<String> tagsFromText(String text) {
+    return Arrays.stream(text.split(" |\n"))
+        .filter(word -> word.contains("#"))
+        .map(word -> word.substring(word.indexOf("#"), word.length()))
+        .map(String::toLowerCase)
+        .sorted()
+        .collect(Collectors.toList());
   }
 }
