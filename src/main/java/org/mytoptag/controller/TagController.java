@@ -26,14 +26,12 @@ package org.mytoptag.controller;
 import org.mytoptag.model.InstagramTag;
 import org.mytoptag.service.InstagramTagService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping(value = "/tag", produces={"application/json"}, method = RequestMethod.GET)
 public class TagController {
 
@@ -50,7 +48,8 @@ public class TagController {
   }
 
   @RequestMapping(value = "/add/{name}", produces={"application/json"}, method = RequestMethod.GET)
-  public List<InstagramTag> addTag(@PathVariable("name") List<String> tags) {
-    return instagramTagService.addTag(tags);
+  public ListResponseEntity addTag(@PathVariable("name") List<String> tags) {
+    List<InstagramTag> result = instagramTagService.addTag(tags);
+    return new ListResponseEntity(result);
   }
 }

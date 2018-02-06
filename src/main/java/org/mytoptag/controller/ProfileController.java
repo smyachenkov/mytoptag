@@ -26,16 +26,15 @@ package org.mytoptag.controller;
 import org.mytoptag.model.InstagramPost;
 import org.mytoptag.service.InstagramProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @RestController
+@CrossOrigin
 @RequestMapping(value = "/profile", produces={"application/json"}, method = RequestMethod.GET)
 public class ProfileController {
 
@@ -47,18 +46,20 @@ public class ProfileController {
   }
 
   @RequestMapping(value = "/posts/{name}", produces={"application/json"}, method = RequestMethod.GET)
-  public List<InstagramPost> getLastPosts(@PathVariable("name") String name) {
+  public ListResponseEntity getLastPosts(@PathVariable("name") String name) {
     try {
-      return instagramProfileService.getLastPosts(name);
+      List<InstagramPost> posts = instagramProfileService.getLastPosts(name);
+      return new ListResponseEntity(posts);
     } catch (IOException ex) {
       throw new ObjectNotFoundException();
     }
   }
 
   @RequestMapping(value = "/tags/{name}", produces={"application/json"}, method = RequestMethod.GET)
-  public Set<String> getTopTags(@PathVariable("name") String name) {
+  public ListResponseEntity getTopTags(@PathVariable("name") String name) {
     try {
-      return instagramProfileService.getLastTags(name);
+      Set<String> tags = instagramProfileService.getLastTags(name);
+      return new ListResponseEntity(new ArrayList<>(tags));
     } catch (IOException ex) {
       throw new ObjectNotFoundException();
     }
