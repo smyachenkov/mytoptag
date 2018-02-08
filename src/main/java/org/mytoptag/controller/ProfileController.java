@@ -24,6 +24,7 @@
 package org.mytoptag.controller;
 
 import org.mytoptag.model.InstagramPost;
+import org.mytoptag.model.dto.ListResponseEntity;
 import org.mytoptag.service.InstagramProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +61,17 @@ public class ProfileController {
     try {
       Set<String> tags = instagramProfileService.getLastTags(name);
       return new ListResponseEntity(new ArrayList<>(tags));
+    } catch (IOException ex) {
+      throw new ObjectNotFoundException();
+    }
+  }
+
+  @RequestMapping(value = "/tags/{name}/counted={counted}", produces={"application/json"}, method = RequestMethod.GET)
+  public ListResponseEntity getTopTagsCounted(@PathVariable("name") String name,
+                                              @PathVariable("counted") Boolean counted) {
+    try {
+      return new ListResponseEntity(new ArrayList<>(counted ? instagramProfileService.getLastTagsCounted(name)
+                                                            : instagramProfileService.getLastTags(name)));
     } catch (IOException ex) {
       throw new ObjectNotFoundException();
     }

@@ -21,19 +21,18 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package org.mytoptag.repository;
+package org.mytoptag.model.dto;
 
+import lombok.Data;
 import org.mytoptag.model.InstagramTag;
-import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
-import java.util.Set;
+@Data
+public class SimpleCountedTag {
+  private String tag;
+  private Long count;
 
-public interface InstagramTagRepository extends MongoRepository<InstagramTag, String> {
-
-  InstagramTag findByName(String name);
-
-  List<InstagramTag> findByNameIn(Set<String> names);
-
-  List<InstagramTag> findAll();
+  public SimpleCountedTag(InstagramTag instagramTag) {
+    this.tag = instagramTag.getName();
+    this.count = instagramTag.getLastHistoryEntry().getCount();
+  }
 }

@@ -53,4 +53,8 @@ public class InstagramTag {
     this.name = name.toLowerCase();
     this.ig_id = ig_id;
   }
+
+  public InstagramTagHistory getLastHistoryEntry() {
+    return history.getLast();
+  }
 }

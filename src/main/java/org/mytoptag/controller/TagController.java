@@ -24,6 +24,7 @@
 package org.mytoptag.controller;
 
 import org.mytoptag.model.InstagramTag;
+import org.mytoptag.model.dto.ListResponseEntity;
 import org.mytoptag.service.InstagramTagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
