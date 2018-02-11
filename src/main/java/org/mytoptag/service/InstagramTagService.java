@@ -62,7 +62,7 @@ public class InstagramTagService {
   }
 
   public List<InstagramTag> addTag(List<String> tags) {
-    List<InstagramTag> newTags = new ArrayList();
+    List<InstagramTag> newTags = new ArrayList<>();
     for (String tag : tags) {
       InstagramTag existingTag = instagramTagRepository.findByName(tag);
       if (existingTag != null) {
@@ -75,6 +75,20 @@ public class InstagramTagService {
       }
     }
     return newTags;
+  }
+
+  public InstagramTag addTag(String tag) {
+    InstagramTag newTag;
+    InstagramTag existingTag = instagramTagRepository.findByName(tag);
+      if (existingTag != null) {
+        newTag = existingTag;
+      } else {
+        newTag = getTagFromWeb(tag);
+        if (newTag != null) {
+          instagramTagRepository.save(newTag);
+        }
+      }
+    return newTag;
   }
 
   public void updateAllTagHistory() {

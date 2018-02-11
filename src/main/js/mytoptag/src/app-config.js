@@ -21,19 +21,8 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package org.mytoptag.repository;
+const config = {
+    api_url: 'http://localhost:8080/',
+};
 
-import org.mytoptag.model.InstagramTag;
-import org.springframework.data.mongodb.repository.MongoRepository;
-
-import java.util.List;
-import java.util.Set;
-
-public interface InstagramTagRepository extends MongoRepository<InstagramTag, String> {
-
-  InstagramTag findByName(String name);
-
-  List<InstagramTag> findByNameIn(Set<String> names);
-
-  List<InstagramTag> findAll();
-}
+module.exports = config;

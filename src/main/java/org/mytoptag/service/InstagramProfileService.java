@@ -28,13 +28,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.mytoptag.model.InstagramPost;
+import org.mytoptag.model.dto.SimpleCountedTag;
+import org.mytoptag.repository.InstagramTagRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +42,16 @@ public class InstagramProfileService {
 
   private static final String INSTAGRAM_URL = "https://www.instagram.com/";
   private static final String JSON_KEY = "window._sharedData = ";
+
+  private InstagramTagRepository instagramTagRepository;
+  private InstagramTagService instagramTagService;
+
+  @Autowired
+  public InstagramProfileService(InstagramTagRepository instagramTagRepository,
+                                 InstagramTagService instagramTagService) {
+    this.instagramTagRepository = instagramTagRepository;
+    this.instagramTagService = instagramTagService;
+  }
 
   public List<InstagramPost> getLastPosts(String username) throws IOException {
     List<InstagramPost> posts = new ArrayList<>();
@@ -73,5 +83,28 @@ public class InstagramProfileService {
     return posts.stream()
         .flatMap(post -> post.getTags().stream())
         .collect(Collectors.toCollection(TreeSet::new));
+  }
+
+  public Set<SimpleCountedTag> getLastTagsCounted(String username) throws IOException {
+    Set<SimpleCountedTag> result = new HashSet<>();
+    List<InstagramPost> posts = getLastPosts(username);
+    Set<String> userTags = posts.stream()
+        .flatMap(post -> post.getTags().stream())
+        .collect(Collectors.toSet());
+
+    Set<SimpleCountedTag> existingTags = instagramTagRepository.findByNameIn(userTags).stream()
+        .map(SimpleCountedTag::new)
+        .collect(Collectors.toSet());
+
+    result.addAll(existingTags);
+    userTags.removeAll(existingTags.stream().map(SimpleCountedTag::getTag).collect(Collectors.toSet()));
+
+    userTags.stream()
+        .map(name -> instagramTagService.addTag(name))
+        .filter(tag -> tag != null)
+        .map(SimpleCountedTag::new)
+        .forEach(result::add);
+
+    return result;
   }
 }

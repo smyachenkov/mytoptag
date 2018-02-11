@@ -21,19 +21,9 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package org.mytoptag.repository;
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './css/index.css';
+import ProfileNameInput from "./components/ProfileNameInput.js"
 
-import org.mytoptag.model.InstagramTag;
-import org.springframework.data.mongodb.repository.MongoRepository;
-
-import java.util.List;
-import java.util.Set;
-
-public interface InstagramTagRepository extends MongoRepository<InstagramTag, String> {
-
-  InstagramTag findByName(String name);
-
-  List<InstagramTag> findByNameIn(Set<String> names);
-
-  List<InstagramTag> findAll();
-}
+ReactDOM.render(<ProfileNameInput />, document.getElementById("root"));

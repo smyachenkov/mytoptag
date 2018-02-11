@@ -21,19 +21,13 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package org.mytoptag.repository;
-
-import org.mytoptag.model.InstagramTag;
-import org.springframework.data.mongodb.repository.MongoRepository;
-
-import java.util.List;
-import java.util.Set;
-
-public interface InstagramTagRepository extends MongoRepository<InstagramTag, String> {
-
-  InstagramTag findByName(String name);
-
-  List<InstagramTag> findByNameIn(Set<String> names);
-
-  List<InstagramTag> findAll();
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  width: 100%;
+  background: #f1efef;
+  margin:50px 0;
+  padding:0;
+  text-align:center;
 }

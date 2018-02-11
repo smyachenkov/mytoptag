@@ -21,19 +21,34 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package org.mytoptag.repository;
+.component-instagram-profile-result {
+  text-align:center;
+  font-family: verdana;
+}
 
-import org.mytoptag.model.InstagramTag;
-import org.springframework.data.mongodb.repository.MongoRepository;
+.component-sort-buttons {
+  text-align:center;
+  font-family: verdana;
+}
 
-import java.util.List;
-import java.util.Set;
+.sort-button-type {
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+    text-decoration:underline;
+    font: normal 100%/1 Verdana, Geneva, sans-serif;
+}
 
-public interface InstagramTagRepository extends MongoRepository<InstagramTag, String> {
-
-  InstagramTag findByName(String name);
-
-  List<InstagramTag> findByNameIn(Set<String> names);
-
-  List<InstagramTag> findAll();
+.sort-button-direction {
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+    text-decoration:underline;
+    font: normal 100%/1 Verdana, Geneva, sans-serif;
 }

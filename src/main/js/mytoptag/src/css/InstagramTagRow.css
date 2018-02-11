@@ -21,19 +21,27 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package org.mytoptag.repository;
+.component-instagram-tag-row {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  width: 44%;
+  padding: 1% 5%;
+  overflow: hidden;
+  border: none;
+  border: 0;
+  font: normal 12px/1 Verdana, Geneva, sans-serif;
+  color: rgba(61,44,119,1);
+  text-align: left;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.2) ;
+  margin-left: auto;
+  margin-right: auto;
+}
 
-import org.mytoptag.model.InstagramTag;
-import org.springframework.data.mongodb.repository.MongoRepository;
+.component-instagram-tag-row:hover .info {
+  display: inline-block;
+}
 
-import java.util.List;
-import java.util.Set;
-
-public interface InstagramTagRepository extends MongoRepository<InstagramTag, String> {
-
-  InstagramTag findByName(String name);
-
-  List<InstagramTag> findByNameIn(Set<String> names);
-
-  List<InstagramTag> findAll();
+.component-instagram-tag-row:hover {
+  background-color: #fff;
 }

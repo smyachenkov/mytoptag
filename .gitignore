@@ -4,3 +4,14 @@ target/
 .settings
 .classpath
 *.iml
+
+/src/main/js/mytoptag/node
+/src/main/js/mytoptag/node_modules
+/src/main/js/mytoptag/build
+package-lock.json
+
+.node
+/coverage
+/build
+
+npm-debug.log*

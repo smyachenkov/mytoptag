@@ -46,6 +46,7 @@ public class InstagramPost {
         .filter(word -> word.contains("#"))
         .map(word -> word.substring(word.indexOf("#"), word.length()))
         .map(String::toLowerCase)
+        .map(tag -> tag.startsWith("#") ? tag.substring(1, tag.length()) : tag)
         .sorted()
         .collect(Collectors.toList());
   }

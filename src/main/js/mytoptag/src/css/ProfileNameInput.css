@@ -21,19 +21,37 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package org.mytoptag.repository;
+.search-button {
+     display: inline-block;
+     -webkit-box-sizing: content-box;
+     -moz-box-sizing: content-box;
+     box-sizing: content-box;
+     cursor: pointer;
+     padding: 10px 20px;
+     border: 2px solid #b7649c;
+     border-radius: 1px;
+     font: normal 16px/20px Verdana, Geneva, sans-serif;
+     color: rgba(255,255,255,0.9);
+     background: #b7649c;
+     outline:none;
+}
 
-import org.mytoptag.model.InstagramTag;
-import org.springframework.data.mongodb.repository.MongoRepository;
+.search-input {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    width: 30%;
+    box-sizing: content-box;
+    cursor: pointer;
+    padding: 10px 1% 10px;
+    border: 2px solid #cea7bc;
+    -webkit-border-radius: 1px;
+    border-radius: 1px;
+    font: normal 100%/normal Verdana, Geneva, sans-serif;
+    color: rgb(0, 0, 0);
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
 
-import java.util.List;
-import java.util.Set;
-
-public interface InstagramTagRepository extends MongoRepository<InstagramTag, String> {
-
-  InstagramTag findByName(String name);
-
-  List<InstagramTag> findByNameIn(Set<String> names);
-
-  List<InstagramTag> findAll();
+search-input:focus, input:focus{
+    outline: none;
 }

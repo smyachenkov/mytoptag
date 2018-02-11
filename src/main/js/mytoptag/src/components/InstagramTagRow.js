@@ -21,19 +21,29 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package org.mytoptag.repository;
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import '../css/InstagramTagRow.css';
 
-import org.mytoptag.model.InstagramTag;
-import org.springframework.data.mongodb.repository.MongoRepository;
+const INSTAGRAM_EXPLORE_URL='https://www.instagram.com/explore/tags/';
 
-import java.util.List;
-import java.util.Set;
-
-public interface InstagramTagRepository extends MongoRepository<InstagramTag, String> {
-
-  InstagramTag findByName(String name);
-
-  List<InstagramTag> findByNameIn(Set<String> names);
-
-  List<InstagramTag> findAll();
+class InstagramTagRow extends Component {
+  render() {
+    const tagName = this.props.tag;
+    const tagCount = this.props.count;
+    return (
+      <div className="component-instagram-tag-row">
+        <div>
+          <a href={INSTAGRAM_EXPLORE_URL+tagName} target="_blank">{tagName}</a>&nbsp;{tagCount}&nbsp;posts
+        </div>
+      </div>
+    );
+  }
 }
+
+InstagramTagRow.propTypes = {
+  tag: PropTypes.string,
+  count: PropTypes.number,
+};
+
+export default InstagramTagRow;
