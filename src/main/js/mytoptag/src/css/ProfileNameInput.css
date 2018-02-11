@@ -31,7 +31,7 @@
      border: 2px solid #b7649c;
      border-radius: 1px;
      font: normal 16px/20px Verdana, Geneva, sans-serif;
-     color: rgba(255,255,255,0.9);
+     color: #ffffff;
      background: #b7649c;
      outline:none;
 }
@@ -47,11 +47,11 @@
     -webkit-border-radius: 1px;
     border-radius: 1px;
     font: normal 100%/normal Verdana, Geneva, sans-serif;
-    color: rgb(0, 0, 0);
+    color: #000000;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
 }
 
-search-input:focus, input:focus{
+.search-input:focus, input:focus {
     outline: none;
 }

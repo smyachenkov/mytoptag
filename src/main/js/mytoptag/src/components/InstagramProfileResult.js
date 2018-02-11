@@ -76,8 +76,8 @@ class InstagramProfileResult extends Component {
     return (
       <div className="component-instagram-profile-result">
       <div className="component-sort-buttons">
-        Sort by&nbsp;
-        <button className="sort-button-type" onClick={this.changeSortType}>{this.state.sortType}</button>&nbsp;
+        Sort by
+        <button className="sort-button-type" onClick={this.changeSortType}>{this.state.sortType}</button>
         <button className="sort-button-direction" onClick={this.changeSortDirection}>{this.state.sortDirection}</button>
       </div>
         {
