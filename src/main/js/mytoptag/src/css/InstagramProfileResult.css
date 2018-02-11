@@ -31,18 +31,7 @@
   font-family: verdana;
 }
 
-.sort-button-type {
-    background-color: Transparent;
-    background-repeat:no-repeat;
-    border: none;
-    cursor:pointer;
-    overflow: hidden;
-    outline:none;
-    text-decoration:underline;
-    font: normal 100%/1 Verdana, Geneva, sans-serif;
-}
-
-.sort-button-direction {
+[class^="sort-button"] {
     background-color: Transparent;
     background-repeat:no-repeat;
     border: none;

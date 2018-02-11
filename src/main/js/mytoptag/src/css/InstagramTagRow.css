@@ -29,13 +29,11 @@
   padding: 1% 5%;
   overflow: hidden;
   border: none;
-  border: 0;
   font: normal 12px/1 Verdana, Geneva, sans-serif;
-  color: rgba(61,44,119,1);
+  color: #3d2c77;
   text-align: left;
-  text-shadow: 1px 1px 1px rgba(0,0,0,0.2) ;
-  margin-left: auto;
-  margin-right: auto;
+  text-shadow: 1px 1px 1px #cccccc;
+  margin: auto;
 }
 
 .component-instagram-tag-row:hover .info {
