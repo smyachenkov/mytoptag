@@ -103,23 +103,26 @@ public class InstagramTagService {
 
   private InstagramTag getTagFromWeb(String name) {
     RestTemplate restTemplate = new RestTemplate();
-    name = name.startsWith(HASHTAG_SEARCH_START_SYMBOL) ? name : HASHTAG_SEARCH_START_SYMBOL + name;
-
     String responseJson = restTemplate.getForObject(INSTAGRAM_SEARCH_URL, String.class, name);
-    return getTopTagFromJson(responseJson);
+    return getTopTagFromJson(responseJson, name);
   }
 
-  private InstagramTag getTopTagFromJson(String json) {
+  // todo parse by proper json mapping
+  private InstagramTag getTopTagFromJson(String json, String tag) {
+    InstagramTag result = null;
     JsonParser parser = JsonParserFactory.getJsonParser();
     Map jsonMap = parser.parseMap(json);
-    ArrayList hashttags = (ArrayList)jsonMap.get(HASHTAGS_NODE);
-    if (hashttags.isEmpty()) {
-      return null;
+    ArrayList hashtags = (ArrayList)jsonMap.get(HASHTAGS_NODE);
+    for (Object map : hashtags) {
+      Map topTag = (Map)((Map)map).get(HASHTAG_NODE);
+      String tagName = (String)topTag.get(HASHTAG_NAME_FIELD);
+      if (tagName.equals(tag)) {
+        Long tagIgId = (Long) topTag.get(HASHTAG_ID_FIELD);
+        Long tagCount = Long.valueOf((Integer) topTag.get(HASHTAG_COUNT_FIELD));
+        result = new InstagramTag(tagName, tagCount, tagIgId);
+        break;
+      }
     }
-    Map topTag = (Map)((Map)hashttags.get(0)).get(HASHTAG_NODE);
-    String tagName = (String)topTag.get(HASHTAG_NAME_FIELD);
-    Long tagIgId = (Long)topTag.get(HASHTAG_ID_FIELD);
-    Long tagCount = Long.valueOf((Integer)topTag.get(HASHTAG_COUNT_FIELD));
-    return new InstagramTag(tagName, tagCount, tagIgId);
+    return result;
   }
 }
