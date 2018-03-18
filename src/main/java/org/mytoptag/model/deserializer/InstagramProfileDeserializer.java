@@ -87,7 +87,13 @@ public class InstagramProfileDeserializer extends StdDeserializer<InstagramProfi
           .get("edge_media_preview_like")
           .get("count")
           .asInt();
-      posts.add(new InstagramPost(id, text, likedBy));
+      String previewLink = mediaNode
+          .get("display_url")
+          .asText();
+      String shortCode = mediaNode
+          .get("shortcode")
+          .asText();
+      posts.add(new InstagramPost(id, text, likedBy, previewLink, shortCode));
     }
     return posts;
   }

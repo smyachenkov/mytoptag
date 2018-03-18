@@ -35,6 +35,8 @@ public class InstagramPost {
   private String text;
   private List<String> tags;
   private int likes;
+  private String previewLink;
+  private String shortCode;
 
   public InstagramPost(Long id, String text) {
     this.id = id;
@@ -42,11 +44,13 @@ public class InstagramPost {
     this.tags = tagsFromText(text);
   }
 
-  public InstagramPost(Long id, String text, Integer likes) {
+  public InstagramPost(Long id, String text, int likes, String previewLink, String shortCode) {
     this.id = id;
     this.text = text;
-    this.tags = tagsFromText(text);
     this.likes = likes;
+    this.previewLink = previewLink;
+    this.shortCode = shortCode;
+    this.tags = tagsFromText(text);
   }
 
   private List<String> tagsFromText(String text) {
