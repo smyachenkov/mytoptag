@@ -23,18 +23,21 @@
  */
 package org.mytoptag.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.mytoptag.model.InstagramPost;
+import org.mytoptag.model.InstagramProfile;
 import org.mytoptag.model.dto.SimpleCountedTag;
 import org.mytoptag.repository.InstagramTagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,7 +57,6 @@ public class InstagramProfileService {
   }
 
   public List<InstagramPost> getLastPosts(String username) throws IOException {
-    List<InstagramPost> posts = new ArrayList<>();
     Document document = Jsoup.connect(INSTAGRAM_URL + username).get();
     String jsonData = document.body()
         .getElementsByTag("script")
@@ -62,20 +64,8 @@ public class InstagramProfileService {
         .childNode(0)
         .toString();
     String jsonString = jsonData.substring(JSON_KEY.length(), jsonData.length() - 1);
-    JsonNode json = new ObjectMapper().readTree(jsonString);
-    JsonNode mediaNodes = json.get("entry_data")
-        .get("ProfilePage")
-        .get(0)
-        .get("user")
-        .get("media")
-        .get("nodes");
-    for (int i = 0; i < mediaNodes.size(); i++) {
-      JsonNode mediaNode = mediaNodes.get(i);
-      Long id = mediaNode.get("id").asLong();
-      String text = mediaNode.get("caption").asText();
-      posts.add(new InstagramPost(id, text));
-    }
-    return posts;
+    InstagramProfile profile = new ObjectMapper().readValue(jsonString, InstagramProfile.class);
+    return profile.getPosts();
   }
 
   public Set<String> getLastTags(String username) throws IOException {

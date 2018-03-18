@@ -21,43 +21,22 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package org.mytoptag.model;
+package org.mytoptag.model.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.mytoptag.model.InstagramTag;
 import org.mytoptag.model.deserializer.InstagramSearchDeserializer;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.List;
 
-@Document(collection = "tags")
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@AllArgsConstructor
 @JsonDeserialize(using = InstagramSearchDeserializer.class)
-public class InstagramTag {
-  @Id
-  private String id;
-  private String name;
-  private Long ig_id;
-  private LinkedList<InstagramTagHistory> history;
-
-  public InstagramTag(String name, Long count, Long ig_id) {
-    this.name = name.toLowerCase();
-    this.ig_id = ig_id;
-    LinkedList<InstagramTagHistory> tagHistory = new LinkedList();
-    tagHistory.add(new InstagramTagHistory(new Date(), count));
-    this.history = tagHistory;
-  }
-
-  public InstagramTag(String name, Long ig_id) {
-    this.name = name.toLowerCase();
-    this.ig_id = ig_id;
-  }
-
-  public InstagramTagHistory getLastHistoryEntry() {
-    return history.getLast();
-  }
+public class InstagramSearch {
+  private List users;
+  private List<InstagramTag> hashtags;
 }
