@@ -1,2 +1,2 @@
 # mytoptag
-Instagram tags statistics tool
+Instagram statistics service
