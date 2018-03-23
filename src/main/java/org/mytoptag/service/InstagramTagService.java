@@ -36,6 +36,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -77,14 +78,11 @@ public class InstagramTagService {
   public InstagramTag addTag(String tag) {
     InstagramTag newTag;
     InstagramTag existingTag = instagramTagRepository.findByName(tag);
-      if (existingTag != null) {
-        newTag = existingTag;
-      } else {
-        newTag = getTagFromWeb(tag);
-        if (newTag != null) {
-          instagramTagRepository.save(newTag);
-        }
-      }
+    if (existingTag != null) {
+      return existingTag;
+    }
+    newTag = getTagFromWeb(tag);
+    Optional.ofNullable(getTagFromWeb(tag)).ifPresent(t -> instagramTagRepository.save(t));
     return newTag;
   }
 
@@ -93,9 +91,12 @@ public class InstagramTagService {
   }
 
   public void updateTagHistory(InstagramTag currentTag) {
-    InstagramTag newTag = getTagFromWeb(currentTag.getName());
-    currentTag.getHistory().add(newTag.getHistory().get(0));
-    instagramTagRepository.save(currentTag);
+    Optional.ofNullable(getTagFromWeb(currentTag.getName())).ifPresent(
+        newTag -> {
+          currentTag.getHistory().add(newTag.getHistory().get(0));
+          instagramTagRepository.save(currentTag);
+        }
+    );
   }
 
   private InstagramTag getTagFromWeb(String name) {
@@ -104,19 +105,16 @@ public class InstagramTagService {
     return getTopTagFromJson(responseJson, name);
   }
 
-  // todo parse by proper json mapping
   private InstagramTag getTopTagFromJson(String json, String tag) {
-    InstagramTag result = null;
     try {
       InstagramSearch search = new ObjectMapper().readValue(json, InstagramSearch.class);
-      result = search.getHashtags().stream()
+      return search.getHashtags().stream()
           .filter(t -> t.getName().equals(tag))
           .findFirst()
           .orElse(null);
-
     } catch (IOException e) {
       log.error("Search failed for tag {}", tag);
+      return null;
     }
-    return result;
   }
 }

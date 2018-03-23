@@ -29,6 +29,7 @@ import lombok.NoArgsConstructor;
 import org.mytoptag.model.deserializer.InstagramSearchDeserializer;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -41,20 +42,21 @@ public class InstagramTag {
   @Id
   private String id;
   private String name;
-  private Long ig_id;
+  @Field("igId")
+  private Long igId;
   private LinkedList<InstagramTagHistory> history;
 
-  public InstagramTag(String name, Long count, Long ig_id) {
+  public InstagramTag(String name, Long count, Long igId) {
     this.name = name.toLowerCase();
-    this.ig_id = ig_id;
+    this.igId = igId;
     LinkedList<InstagramTagHistory> tagHistory = new LinkedList();
     tagHistory.add(new InstagramTagHistory(new Date(), count));
     this.history = tagHistory;
   }
 
-  public InstagramTag(String name, Long ig_id) {
+  public InstagramTag(String name, Long igId) {
     this.name = name.toLowerCase();
-    this.ig_id = ig_id;
+    this.igId = igId;
   }
 
   public InstagramTagHistory getLastHistoryEntry() {

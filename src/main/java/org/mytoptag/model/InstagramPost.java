@@ -56,7 +56,7 @@ public class InstagramPost {
   private List<String> tagsFromText(String text) {
     return Arrays.stream(text.split(" |\n"))
         .filter(word -> word.contains("#"))
-        .map(word -> word.substring(word.indexOf("#"), word.length()))
+        .map(word -> word.substring(word.indexOf('#'), word.length()))
         .map(String::toLowerCase)
         .map(tag -> tag.startsWith("#") ? tag.substring(1, tag.length()) : tag)
         .sorted()
