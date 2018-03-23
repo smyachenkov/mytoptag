@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -91,7 +92,7 @@ public class InstagramProfileService {
 
     userTags.stream()
         .map(name -> instagramTagService.addTag(name))
-        .filter(tag -> tag != null)
+        .filter(Objects::nonNull)
         .map(SimpleCountedTag::new)
         .forEach(result::add);
 

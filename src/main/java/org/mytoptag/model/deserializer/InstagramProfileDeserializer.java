@@ -24,7 +24,6 @@
 package org.mytoptag.model.deserializer;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
@@ -47,7 +46,7 @@ public class InstagramProfileDeserializer extends StdDeserializer<InstagramProfi
 
   @Override
   public InstagramProfile deserialize(JsonParser parser, DeserializationContext context)
-      throws IOException, JsonProcessingException {
+      throws IOException {
     final JsonNode node = parser.getCodec().readTree(parser);
     final List<InstagramPost> posts = parsePosts(node);
     final String username = parseUserName(node);
