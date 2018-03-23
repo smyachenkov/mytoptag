@@ -21,13 +21,18 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
 package org.mytoptag.controller;
 
 import org.mytoptag.model.InstagramPost;
 import org.mytoptag.model.dto.ListResponseEntity;
 import org.mytoptag.service.InstagramProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +41,9 @@ import java.util.Set;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/profile", produces={"application/json"}, method = RequestMethod.GET)
+@RequestMapping(value = "/profile",
+                produces = {"application/json"},
+                method = RequestMethod.GET)
 public class ProfileController {
 
   private InstagramProfileService instagramProfileService;
@@ -46,7 +53,9 @@ public class ProfileController {
     this.instagramProfileService = instagramProfileService;
   }
 
-  @RequestMapping(value = "/posts/{name}", produces={"application/json"}, method = RequestMethod.GET)
+  @RequestMapping(value = "/posts/{name}",
+                  produces = {"application/json"},
+                  method = RequestMethod.GET)
   public ListResponseEntity getLastPosts(@PathVariable("name") String name) {
     try {
       List<InstagramPost> posts = instagramProfileService.getLastPosts(name);
@@ -56,7 +65,9 @@ public class ProfileController {
     }
   }
 
-  @RequestMapping(value = "/tags/{name}", produces={"application/json"}, method = RequestMethod.GET)
+  @RequestMapping(value = "/tags/{name}",
+                  produces = {"application/json"},
+                  method = RequestMethod.GET)
   public ListResponseEntity getTopTags(@PathVariable("name") String name) {
     try {
       Set<String> tags = instagramProfileService.getLastTags(name);
@@ -66,12 +77,17 @@ public class ProfileController {
     }
   }
 
-  @RequestMapping(value = "/tags/{name}/counted={counted}", produces={"application/json"}, method = RequestMethod.GET)
+  @RequestMapping(value = "/tags/{name}/counted={counted}",
+                  produces = {"application/json"},
+                  method = RequestMethod.GET)
   public ListResponseEntity getTopTagsCounted(@PathVariable("name") String name,
                                               @PathVariable("counted") Boolean counted) {
     try {
-      return new ListResponseEntity(new ArrayList<>(counted ? instagramProfileService.getLastTagsCounted(name)
-                                                            : instagramProfileService.getLastTags(name)));
+      return new ListResponseEntity(
+          new ArrayList<>(
+              counted ? instagramProfileService.getLastTagsCounted(name)
+                      : instagramProfileService.getLastTags(name))
+      );
     } catch (IOException ex) {
       throw new ObjectNotFoundException();
     }

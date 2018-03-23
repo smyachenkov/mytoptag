@@ -21,6 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
 package org.mytoptag.model.dto;
 
 import lombok.Data;
@@ -29,6 +30,7 @@ import java.util.List;
 
 @Data
 public class ListResponseEntity {
+
   private List data;
 
   public ListResponseEntity(List data) {

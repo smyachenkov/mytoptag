@@ -21,6 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
 package org.mytoptag.model.deserializer;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -56,8 +57,8 @@ public class InstagramSearchDeserializer extends StdDeserializer<InstagramSearch
 
   private List<InstagramTag> parseTags(JsonNode node) {
     final List<InstagramTag> result = new ArrayList<>();
-    for (Iterator<JsonNode> tagsIterator = node.get("hashtags").elements(); tagsIterator.hasNext();) {
-      JsonNode tagNode = tagsIterator.next().get("hashtag");
+    for (Iterator<JsonNode> it = node.get("hashtags").elements(); it.hasNext();) {
+      JsonNode tagNode = it.next().get("hashtag");
       String name = tagNode.get("name").asText();
       Long igId = tagNode.get("id").asLong();
       Long count = tagNode.get("media_count").asLong();

@@ -21,6 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
 package org.mytoptag.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -88,7 +89,10 @@ public class InstagramProfileService {
         .collect(Collectors.toSet());
 
     result.addAll(existingTags);
-    userTags.removeAll(existingTags.stream().map(SimpleCountedTag::getTag).collect(Collectors.toSet()));
+    userTags.removeAll(existingTags.stream()
+        .map(SimpleCountedTag::getTag)
+        .collect(Collectors.toSet())
+    );
 
     userTags.stream()
         .map(name -> instagramTagService.addTag(name))

@@ -21,6 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
 package org.mytoptag.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -36,6 +37,9 @@ import java.util.List;
 @AllArgsConstructor
 @JsonDeserialize(using = InstagramProfileDeserializer.class)
 public class InstagramProfile {
+
   private String username;
+
   private List<InstagramPost> posts;
+
 }

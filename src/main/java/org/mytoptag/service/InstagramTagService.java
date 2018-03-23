@@ -21,6 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
 package org.mytoptag.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -112,7 +113,7 @@ public class InstagramTagService {
           .filter(t -> t.getName().equals(tag))
           .findFirst()
           .orElse(null);
-    } catch (IOException e) {
+    } catch (IOException exception) {
       log.error("Search failed for tag {}", tag);
       return null;
     }

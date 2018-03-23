@@ -21,6 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
 package org.mytoptag.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -39,11 +40,15 @@ import java.util.LinkedList;
 @NoArgsConstructor
 @JsonDeserialize(using = InstagramSearchDeserializer.class)
 public class InstagramTag {
+
   @Id
   private String id;
+
   private String name;
+
   @Field("igId")
   private Long igId;
+
   private LinkedList<InstagramTagHistory> history;
 
   public InstagramTag(String name, Long count, Long igId) {
