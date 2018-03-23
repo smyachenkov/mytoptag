@@ -118,6 +118,24 @@ class InstagramProfileResult extends Component {
     });
   }
 
+  sortPosts(posts, sortType, sortDirection) {
+    return posts = posts.sort(function(a, b) {
+        var direction = sortDirection === SORT_DIRECTION.ASC ? 1 : -1;
+        var result;
+        switch(sortType){
+         case POST_SORT_TYPE.DATE:
+            result = a.id - b.id;
+            break;
+         case POST_SORT_TYPE.LIKES:
+         default:
+            result = a.likes - b.likes;
+            break;
+        }
+        return result*direction;
+    });
+  }
+
+
   renderSortButtons(viewMode) {
     return <div className="component-sort-buttons">
               Sort by
@@ -149,7 +167,7 @@ class InstagramProfileResult extends Component {
           );
         });
     } else {
-      var posts = this.props.posts;
+      var posts = this.sortPosts(this.props.posts, this.state.postSortType, this.state.postSortDirection);
       content = posts.map((post) => {
           return (
             <InstagramPostRow className="component-instagram-post-row"
@@ -167,7 +185,6 @@ class InstagramProfileResult extends Component {
   render() {
     var sortButtons = this.renderSortButtons(this.state.viewMode);
     var content = this.renderContent(this.state.viewMode);
-    /* todo: css for switch buttons */
     return (
       <div className="component-instagram-profile-result">
       <div className="component-switch-show">

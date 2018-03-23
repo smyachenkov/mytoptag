@@ -27,22 +27,25 @@ import '../css/InstagramPostRow.css';
 
 const INSTAGRAM_POST_URL='https://www.instagram.com/p/';
 
-
-// todo css, formatting, links from tags
 class InstagramPostRow extends Component {
   render() {
     const postLink = INSTAGRAM_POST_URL + this.props.shortCode;
-    var tags;
+    var tags = '';
     this.props.tags.forEach(function(item, i, arr) {
           tags += '#' + item + ' '
       })
     return (
       <div className="component-instagram-post-row">
         <div>
-          likes: {this.props.likes} &nbsp;
-          <a href={this.props.previewLink}>preview</a> &nbsp;
-          <a href={postLink}>post</a> &nbsp;
-          {tags}
+          <p>
+            ❤: {this.props.likes} &nbsp;
+            <a href={postLink} target="_blank">
+              <img src={this.props.previewLink} width="100" height="100" alt="view"/>
+            </a>
+          </p>
+          <p>
+            {tags}
+          </p>
         </div>
       </div>
     );
