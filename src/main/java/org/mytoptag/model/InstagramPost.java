@@ -34,10 +34,22 @@ public class InstagramPost {
   private Long id;
   private String text;
   private List<String> tags;
+  private int likes;
+  private String previewLink;
+  private String shortCode;
 
   public InstagramPost(Long id, String text) {
     this.id = id;
     this.text = text;
+    this.tags = tagsFromText(text);
+  }
+
+  public InstagramPost(Long id, String text, int likes, String previewLink, String shortCode) {
+    this.id = id;
+    this.text = text;
+    this.likes = likes;
+    this.previewLink = previewLink;
+    this.shortCode = shortCode;
     this.tags = tagsFromText(text);
   }
 

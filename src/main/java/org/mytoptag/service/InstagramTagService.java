@@ -23,28 +23,25 @@
  */
 package org.mytoptag.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.mytoptag.controller.ObjectNotFoundException;
 import org.mytoptag.model.InstagramTag;
+import org.mytoptag.model.dto.InstagramSearch;
 import org.mytoptag.repository.InstagramTagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.JsonParser;
-import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
+@Slf4j
 public class InstagramTagService {
+
   private static final String INSTAGRAM_SEARCH_URL = "https://www.instagram.com/web/search/topsearch/?query={tag}";
-  private static final String HASHTAG_SEARCH_START_SYMBOL = "#";
-  private static final String HASHTAGS_NODE = "hashtags";
-  private static final String HASHTAG_NODE = "hashtag";
-  private static final String HASHTAG_ID_FIELD = "id";
-  private static final String HASHTAG_NAME_FIELD = "name";
-  private static final String HASHTAG_COUNT_FIELD = "media_count";
 
   private InstagramTagRepository instagramTagRepository;
 
@@ -110,18 +107,15 @@ public class InstagramTagService {
   // todo parse by proper json mapping
   private InstagramTag getTopTagFromJson(String json, String tag) {
     InstagramTag result = null;
-    JsonParser parser = JsonParserFactory.getJsonParser();
-    Map jsonMap = parser.parseMap(json);
-    ArrayList hashtags = (ArrayList)jsonMap.get(HASHTAGS_NODE);
-    for (Object map : hashtags) {
-      Map topTag = (Map)((Map)map).get(HASHTAG_NODE);
-      String tagName = (String)topTag.get(HASHTAG_NAME_FIELD);
-      if (tagName.equals(tag)) {
-        Long tagIgId = (Long) topTag.get(HASHTAG_ID_FIELD);
-        Long tagCount = Long.valueOf((Integer) topTag.get(HASHTAG_COUNT_FIELD));
-        result = new InstagramTag(tagName, tagCount, tagIgId);
-        break;
-      }
+    try {
+      InstagramSearch search = new ObjectMapper().readValue(json, InstagramSearch.class);
+      result = search.getHashtags().stream()
+          .filter(t -> t.getName().equals(tag))
+          .findFirst()
+          .orElse(null);
+
+    } catch (IOException e) {
+      log.error("Search failed for tag {}", tag);
     }
     return result;
   }

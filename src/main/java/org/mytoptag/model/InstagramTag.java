@@ -23,8 +23,10 @@
  */
 package org.mytoptag.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.mytoptag.model.deserializer.InstagramSearchDeserializer;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -34,6 +36,7 @@ import java.util.LinkedList;
 @Document(collection = "tags")
 @Data
 @NoArgsConstructor
+@JsonDeserialize(using = InstagramSearchDeserializer.class)
 public class InstagramTag {
   @Id
   private String id;

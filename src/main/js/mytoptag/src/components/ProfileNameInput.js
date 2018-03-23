@@ -29,7 +29,7 @@ import config from '../app-config.js';
 class ProfileNameInput extends Component {
   constructor(props) {
     super(props);
-    this.state = {profilename: '', tags: []};
+    this.state = {profilename: '', tags: [], posts: []};
     this.handleChange = this.handleChange.bind(this);
     this.searchProfile = this.searchProfile.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -46,8 +46,8 @@ class ProfileNameInput extends Component {
   }
 
   searchProfile(event)  {
-    var url = config.api_url + `profile/tags/${encodeURIComponent(this.state.profilename)}/counted=true`;
-    fetch(url).then(function(response) {
+    var tags_url = config.api_url + `profile/tags/${encodeURIComponent(this.state.profilename)}/counted=true`;
+    fetch(tags_url).then(function(response) {
         return response.json();
       }).then((json) => {
         if(json.data) {
@@ -58,16 +58,36 @@ class ProfileNameInput extends Component {
           this.setState({tags: resultTags});
         }
     })
+    var posts_url = config.api_url + `profile/posts/${encodeURIComponent(this.state.profilename)}`;
+    fetch(posts_url).then(function(response) {
+        return response.json();
+      }).then((json) => {
+        if(json.data) {
+          var resultPosts = []
+          json.data.forEach(function(item, i, arr) {
+              resultPosts.push(item);
+          })
+          this.setState({posts: resultPosts});
+        }
+    })
   }
 
   render() {
     return (
       <div>
         <label>
-          <input className="search-input" onKeyPress={this.handleKeyPress} value={this.state.profilename} onChange={this.handleChange} />
+          <input className="search-input"
+            onKeyPress={this.handleKeyPress}
+            value={this.state.profilename}
+            onChange={this.handleChange}
+          />
         </label>
-        <button className="search-button" onClick={this.searchProfile}>Search</button>
-        <InstagramProfileResult tags={this.state.tags}
+        <button className="search-button"
+            onClick={this.searchProfile}>Search
+        </button>
+        <InstagramProfileResult
+            tags={this.state.tags}
+            posts={this.state.posts}
         />
       </div>
     );

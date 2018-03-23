@@ -21,39 +21,25 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-.component-instagram-profile-result {
-  text-align:center;
-  font-family: verdana;
+.component-instagram-post-row {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  width: 44%;
+  padding: 1% 5%;
+  overflow: hidden;
+  border: none;
+  font: normal 12px/1 Verdana, Geneva, sans-serif;
+  color: #3d2c77;
+  text-align: left;
+  text-shadow: 1px 1px 1px #cccccc;
+  margin: auto;
 }
 
-.component-sort-buttons {
-  text-align:center;
-  font-family: verdana;
+.component-instagram-post-row:hover .info {
+  display: inline-block;
 }
 
-.component-switch-show  {
-  text-align:center;
-  font-family: verdana;
-}
-
-[class^="sort-button"] {
-    background-color: Transparent;
-    background-repeat:no-repeat;
-    border: none;
-    cursor:pointer;
-    overflow: hidden;
-    outline:none;
-    text-decoration:underline;
-    font: normal 100%/1 Verdana, Geneva, sans-serif;
-}
-
-[class^="switch-show"] {
-    background-color: Transparent;
-    background-repeat:no-repeat;
-    border: none;
-    cursor:pointer;
-    overflow: hidden;
-    outline:none;
-    text-decoration:underline;
-    font: normal 100%/1 Verdana, Geneva, sans-serif;
+.component-instagram-post-row:hover {
+  background-color: #fff;
 }

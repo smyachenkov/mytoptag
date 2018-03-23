@@ -21,39 +21,43 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-.component-instagram-profile-result {
-  text-align:center;
-  font-family: verdana;
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import '../css/InstagramPostRow.css';
+
+const INSTAGRAM_POST_URL='https://www.instagram.com/p/';
+
+class InstagramPostRow extends Component {
+  render() {
+    const postLink = INSTAGRAM_POST_URL + this.props.shortCode;
+    var tags = '';
+    this.props.tags.forEach(function(item, i, arr) {
+          tags += '#' + item + ' '
+      })
+    return (
+      <div className="component-instagram-post-row">
+        <div>
+          <p>
+            ❤: {this.props.likes} &nbsp;
+            <a href={postLink} target="_blank">
+              <img src={this.props.previewLink} width="100" height="100" alt="view"/>
+            </a>
+          </p>
+          <p>
+            {tags}
+          </p>
+        </div>
+      </div>
+    );
+  }
 }
 
-.component-sort-buttons {
-  text-align:center;
-  font-family: verdana;
-}
+InstagramPostRow.propTypes = {
+  shortCode: PropTypes.String,
+  previewLink: PropTypes.String,
+  tags: PropTypes.array,
+  likes: PropTypes.number
+};
 
-.component-switch-show  {
-  text-align:center;
-  font-family: verdana;
-}
 
-[class^="sort-button"] {
-    background-color: Transparent;
-    background-repeat:no-repeat;
-    border: none;
-    cursor:pointer;
-    overflow: hidden;
-    outline:none;
-    text-decoration:underline;
-    font: normal 100%/1 Verdana, Geneva, sans-serif;
-}
-
-[class^="switch-show"] {
-    background-color: Transparent;
-    background-repeat:no-repeat;
-    border: none;
-    cursor:pointer;
-    overflow: hidden;
-    outline:none;
-    text-decoration:underline;
-    font: normal 100%/1 Verdana, Geneva, sans-serif;
-}
+export default InstagramPostRow;

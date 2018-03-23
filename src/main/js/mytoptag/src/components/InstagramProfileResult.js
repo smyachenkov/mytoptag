@@ -24,6 +24,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import InstagramTagRow from './InstagramTagRow.js';
+import InstagramPostRow from  './InstagramPostRow.js';
 import '../css/InstagramProfileResult.css';
 
 const SORT_DIRECTION = {
@@ -31,27 +32,73 @@ const SORT_DIRECTION = {
     ASC: 'asc'
 }
 
-const SORT_TYPE = {
+const TAG_SORT_TYPE = {
     ALPHABETIC: 'tag',
     COUNT: 'count'
+}
+
+const POST_SORT_TYPE = {
+    DATE: 'date',
+    LIKES: 'likes'
+}
+
+const VIEW_MODE = {
+    TAGS: 'Tags',
+    POSTS: 'Posts'
 }
 
 class InstagramProfileResult extends Component {
   constructor(props) {
     super(props);
-    this.state = {sortDirection: SORT_DIRECTION.DESC, sortType: SORT_TYPE.COUNT};
-    this.changeSortDirection = this.changeSortDirection.bind(this);
-    this.changeSortType = this.changeSortType.bind(this);
+    this.state = {
+        tagSortDirection: SORT_DIRECTION.DESC,
+        tagSortType: TAG_SORT_TYPE.COUNT,
+        postSortDirection: SORT_DIRECTION.DESC,
+        postSortType: POST_SORT_TYPE.DATE,
+        viewMode: VIEW_MODE.TAGS
+    };
+    this.changeTagSortDirection = this.changeTagSortDirection.bind(this);
+    this.changeTagSortType = this.changeTagSortType.bind(this);
+    this.changePostSortDirection = this.changePostSortDirection.bind(this);
+    this.changePostSortType = this.changePostSortType.bind(this);
+    this.showPosts = this.showPosts.bind(this);
+    this.showTags = this.showTags.bind(this);
+    this.renderSortButtons = this.renderSortButtons.bind(this);
+    this.renderContent = this.renderContent.bind(this);
   }
 
-  changeSortType(event) {
-    this.setState({sortType:
-        this.state.sortType === SORT_TYPE.ALPHABETIC ? SORT_TYPE.COUNT : SORT_TYPE.ALPHABETIC});
+  /*
+    Tags
+  */
+  changeTagSortType(event) {
+    this.setState({tagSortType:
+        this.state.tagSortType === TAG_SORT_TYPE.ALPHABETIC ? TAG_SORT_TYPE.COUNT : TAG_SORT_TYPE.ALPHABETIC});
   }
 
-  changeSortDirection(event) {
-    this.setState({sortDirection:
-        this.state.sortDirection === SORT_DIRECTION.DESC ? SORT_DIRECTION.ASC : SORT_DIRECTION.DESC});
+  changeTagSortDirection(event) {
+    this.setState({tagSortDirection:
+          this.state.tagSortDirection === SORT_DIRECTION.DESC ? SORT_DIRECTION.ASC : SORT_DIRECTION.DESC});
+  }
+
+  showTags(event) {
+    this.setState({viewMode: VIEW_MODE.TAGS});
+  }
+
+  /*
+    Posts
+  */
+  changePostSortType(event) {
+    this.setState({postSortType:
+          this.state.postSortType === POST_SORT_TYPE.DATE ? POST_SORT_TYPE.LIKES : POST_SORT_TYPE.DATE});
+  }
+
+  changePostSortDirection(event) {
+    this.setState({postSortDirection:
+        this.state.postSortDirection === SORT_DIRECTION.DESC ? SORT_DIRECTION.ASC : SORT_DIRECTION.DESC});
+  }
+
+  showPosts(event) {
+    this.setState({viewMode: VIEW_MODE.POSTS});
   }
 
   sortTags(tags, sortType, sortDirection) {
@@ -59,10 +106,10 @@ class InstagramProfileResult extends Component {
         var direction = sortDirection === SORT_DIRECTION.ASC ? 1 : -1;
         var result;
         switch(sortType){
-         case SORT_TYPE.ALPHABETIC:
+         case TAG_SORT_TYPE.ALPHABETIC:
             result = (a.tag < b.tag) ? -1 : 1;
             break;
-         case SORT_TYPE.COUNT:
+         case TAG_SORT_TYPE.COUNT:
          default:
             result = a.count - b.count;
             break;
@@ -71,34 +118,94 @@ class InstagramProfileResult extends Component {
     });
   }
 
+  sortPosts(posts, sortType, sortDirection) {
+    return posts = posts.sort(function(a, b) {
+        var direction = sortDirection === SORT_DIRECTION.ASC ? 1 : -1;
+        var result;
+        switch(sortType){
+         case POST_SORT_TYPE.DATE:
+            result = a.id - b.id;
+            break;
+         case POST_SORT_TYPE.LIKES:
+         default:
+            result = a.likes - b.likes;
+            break;
+        }
+        return result*direction;
+    });
+  }
+
+
+  renderSortButtons(viewMode) {
+    return <div className="component-sort-buttons">
+              Sort by
+              <button className="sort-button-type"
+                onClick={
+                    viewMode === VIEW_MODE.TAGS ? this.changeTagSortType : this.changePostSortType
+                }>
+                {viewMode === VIEW_MODE.TAGS ? this.state.tagSortType : this.state.postSortType}
+              </button>
+              <button className="sort-button-direction"
+                onClick={
+                    viewMode === VIEW_MODE.TAGS ? this.changeTagSortDirection : this.changePostSortDirection
+                }>
+               {viewMode === VIEW_MODE.TAGS ? this.state.tagSortDirection : this.state.postSortDirection}
+              </button>
+          </div>
+  }
+
+  renderContent(viewMode) {
+    var content;
+    if (viewMode === VIEW_MODE.TAGS) {
+      var tags = this.sortTags(this.props.tags, this.state.tagSortType, this.state.tagSortDirection);
+      content = tags.map((tag) => {
+          return (
+            <InstagramTagRow className="component-instagram-tag-row"
+              tag={tag.tag}
+              count={tag.count}
+            />
+          );
+        });
+    } else {
+      var posts = this.sortPosts(this.props.posts, this.state.postSortType, this.state.postSortDirection);
+      content = posts.map((post) => {
+          return (
+            <InstagramPostRow className="component-instagram-post-row"
+              shortCode={post.shortCode}
+              previewLink={post.previewLink}
+              tags={post.tags}
+              likes={post.likes}
+            />
+          );
+        });
+    }
+    return content;
+  }
+
   render() {
-    var tags = this.sortTags(this.props.tags, this.state.sortType, this.state.sortDirection);
+    var sortButtons = this.renderSortButtons(this.state.viewMode);
+    var content = this.renderContent(this.state.viewMode);
     return (
       <div className="component-instagram-profile-result">
-      <div className="component-sort-buttons">
-        Sort by
-        <button className="sort-button-type" onClick={this.changeSortType}>{this.state.sortType}</button>
-        <button className="sort-button-direction" onClick={this.changeSortDirection}>{this.state.sortDirection}</button>
+      <div className="component-switch-show">
+        <button className="switch-show-posts" onClick={this.showPosts}>Posts</button>
+        <button className="switch-show-tags" onClick={this.showTags}>Tags</button>
       </div>
-        {
-          tags.map((tag) => {
-            return (
-              <InstagramTagRow className="component-instagram-tag-row"
-                tag={tag.tag}
-                count={tag.count}
-              />
-            );
-          })
-        }
+        {sortButtons}
+        {content}
       </div>
     );
   }
 }
 
 InstagramProfileResult.propTypes = {
+  posts: PropTypes.array,
   tags: PropTypes.array,
-  sortType: PropTypes.string,
-  sortDirection: PropTypes.string
+  viewMode: PropTypes.string,
+  tagSortType: PropTypes.string,
+  tagSortDirection: PropTypes.string,
+  postSortType: PropTypes.string,
+  postSortDirection: PropTypes.string
 };
 
 export default InstagramProfileResult;

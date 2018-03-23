@@ -21,39 +21,22 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-.component-instagram-profile-result {
-  text-align:center;
-  font-family: verdana;
-}
+package org.mytoptag.model.dto;
 
-.component-sort-buttons {
-  text-align:center;
-  font-family: verdana;
-}
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.mytoptag.model.InstagramTag;
+import org.mytoptag.model.deserializer.InstagramSearchDeserializer;
 
-.component-switch-show  {
-  text-align:center;
-  font-family: verdana;
-}
+import java.util.List;
 
-[class^="sort-button"] {
-    background-color: Transparent;
-    background-repeat:no-repeat;
-    border: none;
-    cursor:pointer;
-    overflow: hidden;
-    outline:none;
-    text-decoration:underline;
-    font: normal 100%/1 Verdana, Geneva, sans-serif;
-}
-
-[class^="switch-show"] {
-    background-color: Transparent;
-    background-repeat:no-repeat;
-    border: none;
-    cursor:pointer;
-    overflow: hidden;
-    outline:none;
-    text-decoration:underline;
-    font: normal 100%/1 Verdana, Geneva, sans-serif;
+@Getter
+@Setter
+@AllArgsConstructor
+@JsonDeserialize(using = InstagramSearchDeserializer.class)
+public class InstagramSearch {
+  private List users;
+  private List<InstagramTag> hashtags;
 }
