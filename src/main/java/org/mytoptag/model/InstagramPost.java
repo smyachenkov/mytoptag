@@ -26,8 +26,10 @@ package org.mytoptag.model;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Data
@@ -74,12 +76,14 @@ public class InstagramPost {
   }
 
   private List<String> tagsFromText(String text) {
-    return Arrays.stream(text.split(" |\n"))
-        .filter(word -> word.contains("#"))
-        .map(word -> word.substring(word.indexOf('#'), word.length()))
-        .map(String::toLowerCase)
-        .map(tag -> tag.startsWith("#") ? tag.substring(1, tag.length()) : tag)
-        .sorted()
-        .collect(Collectors.toList());
+    return Optional.ofNullable(text).map(
+        t -> Arrays.stream(text.split(" |\n"))
+            .filter(word -> word.contains("#"))
+            .map(word -> word.substring(word.indexOf('#'), word.length()))
+            .map(String::toLowerCase)
+            .map(tag -> tag.startsWith("#") ? tag.substring(1, tag.length()) : tag)
+            .sorted()
+            .collect(Collectors.toList())
+    ).orElse(new ArrayList<>());
   }
 }
