@@ -114,6 +114,7 @@ public class InstagramProfileService {
 
     userTags.stream()
         .map(name -> instagramTagService.addTag(name))
+        .map(list -> list.get(0))
         .filter(Objects::nonNull)
         .map(SimpleCountedTag::new)
         .forEach(result::add);

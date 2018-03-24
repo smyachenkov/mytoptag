@@ -36,6 +36,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,15 +93,8 @@ public class InstagramTagService {
    * @param tag Tag name
    * @return InstagramTag entry
    */
-  public InstagramTag addTag(String tag) {
-    InstagramTag newTag;
-    InstagramTag existingTag = instagramTagRepository.findByName(tag);
-    if (existingTag != null) {
-      return existingTag;
-    }
-    newTag = getTagFromWeb(tag);
-    Optional.ofNullable(getTagFromWeb(tag)).ifPresent(t -> instagramTagRepository.save(t));
-    return newTag;
+  public List<InstagramTag> addTag(String tag) {
+    return addTag(Collections.singletonList(tag));
   }
 
   /**
@@ -123,7 +117,12 @@ public class InstagramTagService {
     );
   }
 
-  private InstagramTag getTagFromWeb(String name) {
+  /**
+   * Parse and return tag from instagram website.
+   * @param name Tag name
+   * @return InstagramTag
+   */
+  public InstagramTag getTagFromWeb(String name) {
     RestTemplate restTemplate = new RestTemplate();
     String responseJson = restTemplate.getForObject(INSTAGRAM_SEARCH_URL, String.class, name);
     return getTopTagFromJson(responseJson, name);
