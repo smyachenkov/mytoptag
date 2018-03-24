@@ -21,6 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
 package org.mytoptag;
 
 import org.springframework.beans.factory.annotation.Configurable;

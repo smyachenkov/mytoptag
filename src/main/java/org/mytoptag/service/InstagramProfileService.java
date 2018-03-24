@@ -21,6 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
 package org.mytoptag.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,6 +58,12 @@ public class InstagramProfileService {
     this.instagramTagService = instagramTagService;
   }
 
+  /**
+   * Get last posts of user.
+   * @param username Instagram account username
+   * @return Lists of InstagramPost
+   * @throws IOException If can't parse json response
+   */
   public List<InstagramPost> getLastPosts(String username) throws IOException {
     Document document = Jsoup.connect(INSTAGRAM_URL + username).get();
     String jsonData = document.body()
@@ -69,6 +76,12 @@ public class InstagramProfileService {
     return profile.getPosts();
   }
 
+  /**
+   * Get tags in last posts of user.
+   * @param username Instagram account username
+   * @return Lists of tags
+   * @throws IOException If can't parse json response
+   */
   public Set<String> getLastTags(String username) throws IOException {
     List<InstagramPost> posts = getLastPosts(username);
     return posts.stream()
@@ -76,6 +89,12 @@ public class InstagramProfileService {
         .collect(Collectors.toCollection(TreeSet::new));
   }
 
+  /**
+   * Get tags with count in last posts of user.
+   * @param username Instagram account username
+   * @return List of tags with total count of each tag's posts
+   * @throws IOException If can't parse json response
+   */
   public Set<SimpleCountedTag> getLastTagsCounted(String username) throws IOException {
     Set<SimpleCountedTag> result = new HashSet<>();
     List<InstagramPost> posts = getLastPosts(username);
@@ -88,7 +107,10 @@ public class InstagramProfileService {
         .collect(Collectors.toSet());
 
     result.addAll(existingTags);
-    userTags.removeAll(existingTags.stream().map(SimpleCountedTag::getTag).collect(Collectors.toSet()));
+    userTags.removeAll(existingTags.stream()
+        .map(SimpleCountedTag::getTag)
+        .collect(Collectors.toSet())
+    );
 
     userTags.stream()
         .map(name -> instagramTagService.addTag(name))

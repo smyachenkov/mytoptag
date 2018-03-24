@@ -21,19 +21,26 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
 package org.mytoptag.controller;
 
 import org.mytoptag.model.InstagramTag;
 import org.mytoptag.model.dto.ListResponseEntity;
 import org.mytoptag.service.InstagramTagService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/tag", produces={"application/json"}, method = RequestMethod.GET)
+@RequestMapping(value = "/tag",
+                produces = {"application/json"},
+                method = RequestMethod.GET)
 public class TagController {
 
   private InstagramTagService instagramTagService;
@@ -43,12 +50,16 @@ public class TagController {
     this.instagramTagService = instagramTagService;
   }
 
-  @RequestMapping(value = "/{name}", produces={"application/json"}, method = RequestMethod.GET)
+  @RequestMapping(value = "/{name}",
+                  produces = {"application/json"},
+                  method = RequestMethod.GET)
   public InstagramTag getTag(@PathVariable("name") String name) {
     return instagramTagService.getExistingTag(name);
   }
 
-  @RequestMapping(value = "/add/{name}", produces={"application/json"}, method = RequestMethod.GET)
+  @RequestMapping(value = "/add/{name}",
+                  produces = {"application/json"},
+                  method = RequestMethod.GET)
   public ListResponseEntity addTag(@PathVariable("name") List<String> tags) {
     List<InstagramTag> result = instagramTagService.addTag(tags);
     return new ListResponseEntity(result);

@@ -21,6 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
 package org.mytoptag.model;
 
 import lombok.Data;
@@ -31,19 +32,38 @@ import java.util.stream.Collectors;
 
 @Data
 public class InstagramPost {
+
   private Long id;
+
   private String text;
+
   private List<String> tags;
+
   private int likes;
+
   private String previewLink;
+
   private String shortCode;
 
+  /**
+   * Ctor.
+   * @param id Instagram post id
+   * @param text Text of a post
+   */
   public InstagramPost(Long id, String text) {
     this.id = id;
     this.text = text;
     this.tags = tagsFromText(text);
   }
 
+  /**
+   * Ctor.
+   * @param id Instagram post id
+   * @param text Text of a post
+   * @param likes Number of likes
+   * @param previewLink Link to small preview pic
+   * @param shortCode Code for post url
+   */
   public InstagramPost(Long id, String text, int likes, String previewLink, String shortCode) {
     this.id = id;
     this.text = text;

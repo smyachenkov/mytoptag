@@ -21,6 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
 package org.mytoptag.model.dto;
 
 import lombok.Data;
@@ -28,7 +29,9 @@ import org.mytoptag.model.InstagramTag;
 
 @Data
 public class SimpleCountedTag {
+
   private String tag;
+
   private Long count;
 
   public SimpleCountedTag(InstagramTag instagramTag) {
