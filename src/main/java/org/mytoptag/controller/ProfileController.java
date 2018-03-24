@@ -53,6 +53,11 @@ public class ProfileController {
     this.instagramProfileService = instagramProfileService;
   }
 
+  /**
+   * Get last posts of user.
+   * @param name Instagram account username
+   * @return List of last 12 posts
+   */
   @RequestMapping(value = "/posts/{name}",
                   produces = {"application/json"},
                   method = RequestMethod.GET)
@@ -65,6 +70,11 @@ public class ProfileController {
     }
   }
 
+  /**
+   * Gets lists of tags used in last posts of account.
+   * @param name Instagram account username
+   * @return List of
+   */
   @RequestMapping(value = "/tags/{name}",
                   produces = {"application/json"},
                   method = RequestMethod.GET)
@@ -77,6 +87,12 @@ public class ProfileController {
     }
   }
 
+  /**
+   * Gets lists of tags used in last posts of account and number of posts for each tag.
+   * @param name Instagram account username
+   * @param counted Check for total amount of tag usage
+   * @return List of
+   */
   @RequestMapping(value = "/tags/{name}/counted={counted}",
                   produces = {"application/json"},
                   method = RequestMethod.GET)

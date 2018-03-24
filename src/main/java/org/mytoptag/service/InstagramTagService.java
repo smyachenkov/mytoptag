@@ -52,6 +52,12 @@ public class InstagramTagService {
     this.instagramTagRepository = instagramTagRepository;
   }
 
+  /**
+   * Gets existing tag from repository.
+   * @param name Tag
+   * @return InstagramTag entry
+   * @throws ObjectNotFoundException If tag does not exist in repository
+   */
   public InstagramTag getExistingTag(String name) throws ObjectNotFoundException {
     InstagramTag tag = instagramTagRepository.findByName(name);
     if (tag == null) {
@@ -60,6 +66,11 @@ public class InstagramTagService {
     return tag;
   }
 
+  /**
+   * Saves list of tags to repository.
+   * @param tags List of tag names
+   * @return List of InstagramTag entries
+   */
   public List<InstagramTag> addTag(List<String> tags) {
     List<InstagramTag> newTags = new ArrayList<>();
     for (String tag : tags) {
@@ -76,6 +87,11 @@ public class InstagramTagService {
     return newTags;
   }
 
+  /**
+   * Adds tag to repository if such tag exists on Instagram.
+   * @param tag Tag name
+   * @return InstagramTag entry
+   */
   public InstagramTag addTag(String tag) {
     InstagramTag newTag;
     InstagramTag existingTag = instagramTagRepository.findByName(tag);
@@ -87,10 +103,17 @@ public class InstagramTagService {
     return newTag;
   }
 
+  /**
+   * Updates history for all tags in repository.
+   */
   public void updateAllTagHistory() {
     instagramTagRepository.findAll().forEach(this::updateTagHistory);
   }
 
+  /**
+   * Updates existing tag history.
+   * @param currentTag InstagramTag entry
+   */
   public void updateTagHistory(InstagramTag currentTag) {
     Optional.ofNullable(getTagFromWeb(currentTag.getName())).ifPresent(
         newTag -> {

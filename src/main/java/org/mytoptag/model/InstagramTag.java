@@ -51,14 +51,25 @@ public class InstagramTag {
 
   private LinkedList<InstagramTagHistory> history;
 
+  /**
+   * Ctor.
+   * @param name Tag name
+   * @param count Total tag count
+   * @param igId Instagram id of a tag
+   */
   public InstagramTag(String name, Long count, Long igId) {
     this.name = name.toLowerCase();
     this.igId = igId;
-    LinkedList<InstagramTagHistory> tagHistory = new LinkedList();
+    LinkedList<InstagramTagHistory> tagHistory = new LinkedList<>();
     tagHistory.add(new InstagramTagHistory(new Date(), count));
     this.history = tagHistory;
   }
 
+  /**
+   * Ctor.
+   * @param name Tag name
+   * @param igId Instagram id of a tag
+   */
   public InstagramTag(String name, Long igId) {
     this.name = name.toLowerCase();
     this.igId = igId;
