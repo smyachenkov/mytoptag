@@ -1,7 +1,7 @@
 package org.mytoptag.service;
 
 import org.junit.Assert;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mytoptag.model.InstagramPost;
@@ -12,8 +12,8 @@ import java.util.*;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-class InstagramProfileServiceTest {
+@RunWith( MockitoJUnitRunner.class)
+public class InstagramProfileServiceTest {
 
   private InstagramTagRepository tagRepository = mock(InstagramTagRepository.class);
 
@@ -21,9 +21,8 @@ class InstagramProfileServiceTest {
 
   private InstagramProfileService profileService = spy(new InstagramProfileService(tagRepository, tagService));
 
-
   @Test
-  public void  getLastTagsRemovesDuplicates() throws IOException {
+  public void getLastTagsRemovesDuplicates() throws IOException {
     List<InstagramPost> posts = Arrays.asList(
         new InstagramPost(1L, "#travel, #photo"),
         new InstagramPost(2L, "#travel, #test")
@@ -34,7 +33,7 @@ class InstagramProfileServiceTest {
   }
 
   @Test
-  public void  getLastTagsAllowsEmptyTexts() throws IOException {
+  public void getLastTagsAllowsEmptyTexts() throws IOException {
     List<InstagramPost> posts = Collections.singletonList(new InstagramPost(1L, ""));
     when(profileService.getLastPosts("user")).thenReturn(posts);
     Assert.assertEquals("Can't process post with empty text",
@@ -42,7 +41,7 @@ class InstagramProfileServiceTest {
   }
 
   @Test
-  public void  getLastTagsParsesOnlyTags() throws IOException {
+  public void getLastTagsParsesOnlyTags() throws IOException {
     List<InstagramPost> posts = Arrays.asList(
         new InstagramPost(1L, "hello world #travel #photo"),
         new InstagramPost(2L, "this text has no tags")

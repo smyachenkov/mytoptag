@@ -1,10 +1,10 @@
 package org.mytoptag.model;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class InstagramPostTest {
+public class InstagramPostTest {
 
   @Test
   public void createsListOfTagsFromText() {
