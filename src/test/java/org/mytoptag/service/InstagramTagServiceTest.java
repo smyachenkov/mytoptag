@@ -1,7 +1,7 @@
 package org.mytoptag.service;
 
+import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mytoptag.controller.ObjectNotFoundException;
@@ -11,15 +11,15 @@ import org.mytoptag.repository.InstagramTagRepository;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
-class InstagramTagServiceTest {
+public class InstagramTagServiceTest {
 
   private InstagramTagRepository tagRepository = mock(InstagramTagRepository.class);
-  private InstagramTagService tagService = spy(new InstagramTagService(tagRepository));
 
+  private InstagramTagService tagService = spy(new InstagramTagService(tagRepository));
 
   @Test
   public void getExistingTagReturnsTagIfFound() {
@@ -39,9 +39,10 @@ class InstagramTagServiceTest {
   @Test
   public void addTagSavesSingleTag() {
     InstagramTag tag = mock(InstagramTag.class);
-    when(tagRepository.findByName(anyString())).thenReturn(null);
-    when(tagService.getTagFromWeb(anyString())).thenReturn(tag);
-    assertEquals("Can't save a single tag", tag, tagService.addTag(anyString()));
+    when(tagRepository.findByName("tag")).thenReturn(null);
+    when(tagService.getTagFromWeb("tag")).thenReturn(tag);
+    when(tagRepository.save(tag)).thenReturn(tag);
+    assertEquals("Can't save a single tag", tag, tagService.addTag("tag").get(0));
   }
 
   @Test
