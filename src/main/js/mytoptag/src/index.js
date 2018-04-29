@@ -24,6 +24,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './css/index.css';
-import ProfileNameInput from "./components/ProfileNameInput.js"
+import SearchInput from "./components/SearchInput.js"
 
-ReactDOM.render(<ProfileNameInput />, document.getElementById("root"));
+ReactDOM.render(<SearchInput />, document.getElementById("root"));

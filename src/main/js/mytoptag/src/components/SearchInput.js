@@ -23,53 +23,68 @@
  */
 import React, {Component} from 'react';
 import InstagramProfileResult from "./InstagramProfileResult.js";
-import '../css/ProfileNameInput.css';
+import '../css/SearchInput.css';
 import config from '../app-config.js';
 
-class ProfileNameInput extends Component {
+const SEARCH_TYPE = {
+    TAGS: 'Tags',
+    PROFILE: 'Profile'
+}
+
+// todo accept tags as space or comma separated list
+class SearchInput extends Component {
   constructor(props) {
     super(props);
-    this.state = {profilename: '', tags: [], posts: []};
+    this.state = {
+      input: '',
+      searchType: SEARCH_TYPE.PROFILE,
+      tags: [],
+      posts: []
+    };
     this.handleChange = this.handleChange.bind(this);
-    this.searchProfile = this.searchProfile.bind(this);
+    this.search = this.search.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   handleChange(event) {
-    this.setState({profilename: event.target.value});
+    this.setState({input: event.target.value});
   }
 
   handleKeyPress(event) {
     if (event.key === 'Enter') {
-      this.searchProfile(event);
+      this.search(event);
     }
   }
 
-  searchProfile(event)  {
-    var tags_url = config.api_url + `profile/tags/${encodeURIComponent(this.state.profilename)}/counted=true`;
-    fetch(tags_url).then(function(response) {
-        return response.json();
-      }).then((json) => {
-        if(json.data) {
-          var resultTags = []
-          json.data.forEach(function(item, i, arr) {
-              resultTags.push(item);
-          })
-          this.setState({tags: resultTags});
-        }
-    })
-    var posts_url = config.api_url + `profile/posts/${encodeURIComponent(this.state.profilename)}`;
-    fetch(posts_url).then(function(response) {
-        return response.json();
-      }).then((json) => {
-        if(json.data) {
-          var resultPosts = []
-          json.data.forEach(function(item, i, arr) {
-              resultPosts.push(item);
-          })
-          this.setState({posts: resultPosts});
-        }
-    })
+  search(event) {
+    if (this.state.input.startsWith('#')) {
+      // todo implement tag search
+    } else {
+      var tags_url = config.api_url + `profile/tags/${encodeURIComponent(this.state.input)}/counted=true`;
+      fetch(tags_url).then(function(response) {
+          return response.json();
+        }).then((json) => {
+          if(json.data) {
+            var resultTags = []
+            json.data.forEach(function(item, i, arr) {
+                resultTags.push(item);
+            })
+            this.setState({tags: resultTags});
+          }
+      })
+      var posts_url = config.api_url + `profile/posts/${encodeURIComponent(this.state.input)}`;
+      fetch(posts_url).then(function(response) {
+          return response.json();
+        }).then((json) => {
+          if(json.data) {
+            var resultPosts = []
+            json.data.forEach(function(item, i, arr) {
+                resultPosts.push(item);
+            })
+            this.setState({posts: resultPosts});
+          }
+      })
+    }
   }
 
   render() {
@@ -78,12 +93,12 @@ class ProfileNameInput extends Component {
         <label>
           <input className="search-input"
             onKeyPress={this.handleKeyPress}
-            value={this.state.profilename}
+            value={this.state.input}
             onChange={this.handleChange}
           />
         </label>
         <button className="search-button"
-            onClick={this.searchProfile}>Search
+            onClick={this.search}>Search
         </button>
         <InstagramProfileResult
             tags={this.state.tags}
@@ -94,4 +109,4 @@ class ProfileNameInput extends Component {
   }
 }
 
-export default ProfileNameInput;
+export default SearchInput;

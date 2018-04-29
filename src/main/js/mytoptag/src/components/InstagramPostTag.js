@@ -23,44 +23,52 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import '../css/InstagramPostRow.css';
-import InstagramPostTag from './InstagramPostTag.js';
+import ReactTooltip from 'react-tooltip'
+import config from '../app-config.js';
 
-const INSTAGRAM_POST_URL='https://www.instagram.com/p/';
+class InstagramPostTag extends Component {
 
-class InstagramPostRow extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+          tag: this.props.tag,
+          count: null
+        };
+    this.loadStats = this.loadStats.bind(this);
+  }
+
+  loadStats() {
+    if (this.state.count === null) {
+      var request = config.api_url + `tag/${encodeURIComponent(this.state.tag)}`;
+      fetch(request).then(function(response) {
+                return response.json();
+              }).then((json) => {
+                const resultCount = json.lastHistoryEntry.count
+                this.setState({count: resultCount});
+            })
+    }
+    return this.state.count;
+  }
+
   render() {
-    const postLink = INSTAGRAM_POST_URL + this.props.shortCode;
+    const tag = this.props.tag;
     return (
-      <div className="component-instagram-post-row">
-        <div className="component-instagram-post-likes">
-          ❤  {this.props.likes}
-          &nbsp;
-          &nbsp;
-        </div>
-        <div className="component-instagram-post-preview">
-          <a href={postLink} target="_blank">
-            <img src={this.props.previewLink} width="100" height="100" alt="view"/>
-          </a>
-          &nbsp;
-          &nbsp;
-        </div>
-        <div className="component-instagram-post-tags">
-          { this.props.tags.map(t =>
-            { return <InstagramPostTag className="component-instagram-post-tag" tag={t}/> })
-          }
-        </div>
-      </div>
+      <span>
+        <a data-tip data-for={'tagStats_' + tag} data-event='click focus'>
+            <span><a href={"#" + tag}>{"#" + tag}</a> </span>
+        </a>
+        <ReactTooltip id={'tagStats_'+ tag} type='dark' place="left" effect="solid">
+          <span>Posts with this tag:{this.loadStats()}</span>
+        </ReactTooltip>
+      </span>
     );
   }
+
 }
 
-InstagramPostRow.propTypes = {
-  shortCode: PropTypes.String,
-  previewLink: PropTypes.String,
-  tags: PropTypes.array,
-  likes: PropTypes.number
+InstagramPostTag.propTypes = {
+  tag: PropTypes.string,
+  count: PropTypes.number
 };
 
-
-export default InstagramPostRow;
+export default InstagramPostTag;

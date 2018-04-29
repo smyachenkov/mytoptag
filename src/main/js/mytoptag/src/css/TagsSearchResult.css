@@ -21,38 +21,5 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-.component-instagram-post-row {
-  -webkit-box-sizing: content-box;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-  width: 50%;
-  padding: 1% 5%;
-  overflow: hidden;
-  border: none;
-  font: normal 12px/1 Verdana, Geneva, sans-serif;
-  color: #3d2c77;
-  text-align: left;
-  text-shadow: 1px 1px 1px #cccccc;
-  margin: auto;
-}
 
-.component-instagram-post-row:hover .info {
-  display: inline-block;
-}
-
-.component-instagram-post-row:hover {
-  background-color: #fff;
-}
-
-.component-instagram-post-likes {
-  float: left;
-}
-
-.component-instagram-post-preview {
-  float: left;
-}
-
-.component-instagram-post-tags {
-  float: left;
-  width: 75%;
-}
+/* todo implement */
