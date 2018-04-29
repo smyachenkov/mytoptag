@@ -44,7 +44,7 @@
     overflow: hidden;
     outline:none;
     text-decoration:underline;
-    font: normal 100%/1 Verdana, Geneva, sans-serif;
+    font: normal 100%/200% Verdana, Geneva, sans-serif;
 }
 
 [class^="switch-show"] {
@@ -55,5 +55,5 @@
     overflow: hidden;
     outline:none;
     text-decoration:underline;
-    font: normal 100%/1 Verdana, Geneva, sans-serif;
+    font: normal 100%/200% Verdana, Geneva, sans-serif;
 }
