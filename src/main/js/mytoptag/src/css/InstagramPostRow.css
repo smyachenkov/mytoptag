@@ -49,10 +49,12 @@
 }
 
 .component-instagram-post-preview {
+  padding: 0% 0% 0% 2%;
   float: left;
 }
 
 .component-instagram-post-tags {
+  padding: 0% 0% 0% 2%;
   float: left;
   width: 75%;
 }

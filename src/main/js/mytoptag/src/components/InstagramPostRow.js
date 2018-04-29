@@ -35,15 +35,11 @@ class InstagramPostRow extends Component {
       <div className="component-instagram-post-row">
         <div className="component-instagram-post-likes">
           ❤  {this.props.likes}
-          &nbsp;
-          &nbsp;
         </div>
         <div className="component-instagram-post-preview">
           <a href={postLink} target="_blank">
             <img src={this.props.previewLink} width="100" height="100" alt="view"/>
           </a>
-          &nbsp;
-          &nbsp;
         </div>
         <div className="component-instagram-post-tags">
           { this.props.tags.map(t =>
