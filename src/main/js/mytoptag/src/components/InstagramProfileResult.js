@@ -51,6 +51,8 @@ class InstagramProfileResult extends Component {
   constructor(props) {
     super(props);
     this.state = {
+        posts: this.props.posts,
+        tags: this.props.tags,
         tagSortDirection: SORT_DIRECTION.DESC,
         tagSortType: TAG_SORT_TYPE.COUNT,
         postSortDirection: SORT_DIRECTION.DESC,

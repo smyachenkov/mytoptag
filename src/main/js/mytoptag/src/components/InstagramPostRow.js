@@ -29,6 +29,17 @@ import InstagramPostTag from './InstagramPostTag.js';
 const INSTAGRAM_POST_URL='https://www.instagram.com/p/';
 
 class InstagramPostRow extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+          shortCode: this.props.shortCode,
+          previewLink: this.props.previewLink,
+          tags: this.props.tags,
+          likes: this.props.likes
+        };
+  }
+
   render() {
     const postLink = INSTAGRAM_POST_URL + this.props.shortCode;
     return (
@@ -43,7 +54,7 @@ class InstagramPostRow extends Component {
         </div>
         <div className="component-instagram-post-tags">
           { this.props.tags.map(t =>
-            { return <InstagramPostTag className="component-instagram-post-tag" tag={t}/> })
+            { return <InstagramPostTag className="component-instagram-post-tag" tag={t.tag} count={t.count}/> })
           }
         </div>
       </div>
@@ -52,8 +63,8 @@ class InstagramPostRow extends Component {
 }
 
 InstagramPostRow.propTypes = {
-  shortCode: PropTypes.String,
-  previewLink: PropTypes.String,
+  shortCode: PropTypes.string,
+  previewLink: PropTypes.string,
   tags: PropTypes.array,
   likes: PropTypes.number
 };

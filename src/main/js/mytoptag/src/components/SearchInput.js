@@ -57,6 +57,7 @@ class SearchInput extends Component {
   }
 
   search(event) {
+    this.setState({tags:[], posts: []})
     if (this.state.input.startsWith('#')) {
       // todo implement tag search
     } else {
@@ -65,23 +66,15 @@ class SearchInput extends Component {
           return response.json();
         }).then((json) => {
           if(json.data) {
-            var resultTags = []
-            json.data.forEach(function(item, i, arr) {
-                resultTags.push(item);
-            })
-            this.setState({tags: resultTags});
+            this.setState({tags: json.data});
           }
       })
-      var posts_url = config.api_url + `profile/posts/${encodeURIComponent(this.state.input)}`;
+      var posts_url = config.api_url + `profile/posts/${encodeURIComponent(this.state.input)}/counted=true`;
       fetch(posts_url).then(function(response) {
           return response.json();
         }).then((json) => {
           if(json.data) {
-            var resultPosts = []
-            json.data.forEach(function(item, i, arr) {
-                resultPosts.push(item);
-            })
-            this.setState({posts: resultPosts});
+            this.setState({posts: json.data});
           }
       })
     }

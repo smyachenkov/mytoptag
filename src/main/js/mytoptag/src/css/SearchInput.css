@@ -23,8 +23,6 @@
  */
 .search-button {
      display: inline-block;
-     -webkit-box-sizing: content-box;
-     -moz-box-sizing: content-box;
      box-sizing: content-box;
      cursor: pointer;
      padding: 10px 20px;
@@ -37,21 +35,13 @@
 }
 
 .search-input {
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
     width: 30%;
     box-sizing: content-box;
-    cursor: pointer;
+    cursor: auto;
     padding: 10px 1% 10px;
     border: 2px solid #cea7bc;
     -webkit-border-radius: 1px;
     border-radius: 1px;
     font: normal 100%/normal Verdana, Geneva, sans-serif;
     color: #000000;
-    -o-text-overflow: ellipsis;
-    text-overflow: ellipsis;
-}
-
-.search-input:focus, input:focus {
-    outline: none;
 }

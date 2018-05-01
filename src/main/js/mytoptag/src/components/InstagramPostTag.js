@@ -24,7 +24,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip'
-import config from '../app-config.js';
 
 class InstagramPostTag extends Component {
 
@@ -32,38 +31,36 @@ class InstagramPostTag extends Component {
     super(props);
     this.state = {
           tag: this.props.tag,
-          count: null
+          count: this.props.count
         };
-    this.loadStats = this.loadStats.bind(this);
-  }
-
-  loadStats() {
-    if (this.state.count === null) {
-      var request = config.api_url + `tag/${encodeURIComponent(this.state.tag)}`;
-      fetch(request).then(function(response) {
-                return response.json();
-              }).then((json) => {
-                const resultCount = json.lastHistoryEntry.count
-                this.setState({count: resultCount});
-            })
-    }
-    return this.state.count;
   }
 
   render() {
-    const tag = this.props.tag;
+    const tag = this.state.tag;
+    const tagToTooltipLength = 95+tag.length*4;
     return (
-      <span>
-        <a data-tip data-for={'tagStats_' + tag} data-event='click focus'>
-            <span><a href={"#" + tag}>{"#" + tag}</a> </span>
+      <span className="post-tag-entry">
+        <a data-tip data-for={'tag-stats-' + tag} data-event='click focus'>
+            <span>
+              <a>
+                {"#" + tag}
+              </a>
+            </span>
         </a>
-        <ReactTooltip id={'tagStats_'+ tag} type='dark' place="left" effect="solid">
-          <span>Posts with this tag:{this.loadStats()}</span>
+        <ReactTooltip
+            id={'tag-stats-'+ tag}
+            type='info'
+            place="right"
+            effect="solid"
+            offset={{right: tagToTooltipLength, bottom: 9}}
+            getContent={[() => {
+              return "Posts with this tag:" + this.state.count
+              }]
+            }>
         </ReactTooltip>
       </span>
     );
   }
-
 }
 
 InstagramPostTag.propTypes = {
