@@ -53,7 +53,6 @@ public class InstagramTagServiceTest {
     assertEquals("Can't save list of tags", tags.size(), tagService.addTag(tags).size());
   }
 
-
   @Test
   public void addTagSavesOnlyNewTag() {
     InstagramTag existingTag = mock(InstagramTag.class);
@@ -75,6 +74,32 @@ public class InstagramTagServiceTest {
     when(tagService.getTagFromWeb(anyString())).thenReturn(null);
     assertEquals("Doesn't ignore tags that are absent on Instagram",
         0, tagService.addTag(Arrays.asList("travel", "photo")).size());
+  }
+
+  @Test
+  public void getTagRetrievesExistingTag() {
+    InstagramTag existingTag = mock(InstagramTag.class);
+    when(tagRepository.findByName(anyString())).thenReturn(existingTag);
+    assertEquals("Can't retrieve existing tag from repository",
+        existingTag, tagService.getTag(anyString()));
+  }
+
+  @Test
+  public void getTagRetrievesSavesNewTag() {
+    InstagramTag newTag = mock(InstagramTag.class);
+    when(tagRepository.findByName(anyString())).thenReturn(null);
+    when(tagService.getTagFromWeb(anyString())).thenReturn(newTag);
+    when(tagRepository.save(newTag)).thenReturn(newTag);
+    assertEquals("Can't save new tag if tag is present on Instagram",
+        newTag, tagService.getTag(anyString()));
+  }
+
+  @Test
+  public void getTagProducesExceptionWhenCantRetrieveTagFromInstagram() {
+    when(tagRepository.findByName(anyString())).thenReturn(null);
+    when(tagService.getTagFromWeb(anyString())).thenReturn(null);
+    Assertions.assertThrows(ObjectNotFoundException.class, () -> tagService.getTag(anyString()),
+        "Can't throw an ObjectNotFoundException when tag is absent in repository and Instagram");
   }
 
 }

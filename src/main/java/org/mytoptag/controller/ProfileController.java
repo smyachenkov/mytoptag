@@ -25,6 +25,7 @@
 package org.mytoptag.controller;
 
 import org.mytoptag.model.InstagramPost;
+import org.mytoptag.model.dto.InstagramPostCounted;
 import org.mytoptag.model.dto.ListResponseEntity;
 import org.mytoptag.service.InstagramProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,25 @@ public class ProfileController {
   public ListResponseEntity getLastPosts(@PathVariable("name") String name) {
     try {
       List<InstagramPost> posts = instagramProfileService.getLastPosts(name);
+      return new ListResponseEntity(posts);
+    } catch (IOException ex) {
+      throw new ObjectNotFoundException();
+    }
+  }
+
+  /**
+   * Get last posts of user.
+   * @param name Instagram account username
+   * @param counted Check for total amount of tag usage
+   * @return List of last 12 posts
+   */
+  @RequestMapping(value = "/posts/{name}/counted={counted}",
+      produces = {"application/json"},
+      method = RequestMethod.GET)
+  public ListResponseEntity getLastPosts(@PathVariable("name") String name,
+                                         @PathVariable("counted") Boolean counted) {
+    try {
+      List<InstagramPostCounted> posts = instagramProfileService.getLastPostsCounted(name, counted);
       return new ListResponseEntity(posts);
     } catch (IOException ex) {
       throw new ObjectNotFoundException();

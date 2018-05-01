@@ -21,37 +21,56 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-.search-button {
-     display: inline-block;
-     -webkit-box-sizing: content-box;
-     -moz-box-sizing: content-box;
-     box-sizing: content-box;
-     cursor: pointer;
-     padding: 10px 20px;
-     border: 2px solid #b7649c;
-     border-radius: 1px;
-     font: normal 16px/20px Verdana, Geneva, sans-serif;
-     color: #ffffff;
-     background: #b7649c;
-     outline:none;
-}
 
-.search-input {
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    width: 30%;
-    box-sizing: content-box;
-    cursor: pointer;
-    padding: 10px 1% 10px;
-    border: 2px solid #cea7bc;
-    -webkit-border-radius: 1px;
-    border-radius: 1px;
-    font: normal 100%/normal Verdana, Geneva, sans-serif;
-    color: #000000;
-    -o-text-overflow: ellipsis;
-    text-overflow: ellipsis;
-}
+package org.mytoptag.model.dto;
 
-.search-input:focus, input:focus {
-    outline: none;
+import lombok.Getter;
+import lombok.Setter;
+import org.mytoptag.model.InstagramPost;
+
+import java.util.List;
+
+@Getter
+@Setter
+public class InstagramPostCounted {
+
+  private Long id;
+
+  private String text;
+
+  private int likes;
+
+  private String previewLink;
+
+  private String shortCode;
+
+  private List<InstagramTagCounted> tags;
+
+  /**
+   * Ctor.
+   * @param post InstagramPost
+   */
+  public InstagramPostCounted(final InstagramPost post) {
+    this.id = post.getId();
+    this.text = post.getText();
+    this.likes = post.getLikes();
+    this.previewLink = post.getPreviewLink();
+    this.shortCode = post.getShortCode();
+  }
+
+  /**
+   * Ctor.
+   * @param post InstagramPost
+   * @param tags List of InstagramTagCounted
+   */
+  public InstagramPostCounted(final InstagramPost post,
+                              final List<InstagramTagCounted> tags) {
+    this.id = post.getId();
+    this.text = post.getText();
+    this.likes = post.getLikes();
+    this.previewLink = post.getPreviewLink();
+    this.shortCode = post.getShortCode();
+    this.tags = tags;
+  }
+
 }

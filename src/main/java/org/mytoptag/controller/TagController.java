@@ -54,7 +54,7 @@ public class TagController {
                   produces = {"application/json"},
                   method = RequestMethod.GET)
   public InstagramTag getTag(@PathVariable("name") String name) {
-    return instagramTagService.getExistingTag(name);
+    return instagramTagService.getTag(name);
   }
 
   @RequestMapping(value = "/add/{name}",

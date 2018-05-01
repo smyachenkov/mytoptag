@@ -29,7 +29,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.mytoptag.model.InstagramPost;
 import org.mytoptag.model.InstagramProfile;
-import org.mytoptag.model.dto.SimpleCountedTag;
+import org.mytoptag.model.dto.InstagramPostCounted;
+import org.mytoptag.model.dto.InstagramTagCounted;
 import org.mytoptag.repository.InstagramTagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,16 +65,31 @@ public class InstagramProfileService {
    * @return Lists of InstagramPost
    * @throws IOException If can't parse json response
    */
-  public List<InstagramPost> getLastPosts(String username) throws IOException {
-    Document document = Jsoup.connect(INSTAGRAM_URL + username).get();
-    String jsonData = document.body()
-        .getElementsByTag("script")
-        .first()
-        .childNode(0)
-        .toString();
-    String jsonString = jsonData.substring(JSON_KEY.length(), jsonData.length() - 1);
-    InstagramProfile profile = new ObjectMapper().readValue(jsonString, InstagramProfile.class);
+  public List<InstagramPost> getLastPosts(final String username) throws IOException {
+    final InstagramProfile profile = retrieveInstagramProfile(username);
     return profile.getPosts();
+  }
+
+  /**
+   * Get last posts of user.
+   * @param username Instagram account username
+   * @param counted count each tag total number
+   * @return Lists of InstagramPost
+   * @throws IOException If can't parse json response
+   */
+  public List<InstagramPostCounted> getLastPostsCounted(final String username,
+                                                        final boolean counted) throws IOException {
+    final List<InstagramPost> posts = retrieveInstagramProfile(username).getPosts();
+    if (!counted) {
+      return posts.stream()
+          .map(InstagramPostCounted::new)
+          .collect(Collectors.toList());
+    }
+    return posts.stream()
+        .map(p -> new InstagramPostCounted(p, p.getTags().stream()
+          .map(t -> new InstagramTagCounted(instagramTagService.getTag(t)))
+          .collect(Collectors.toList()))
+    ).collect(Collectors.toList());
   }
 
   /**
@@ -82,7 +98,7 @@ public class InstagramProfileService {
    * @return Lists of tags
    * @throws IOException If can't parse json response
    */
-  public Set<String> getLastTags(String username) throws IOException {
+  public Set<String> getLastTags(final String username) throws IOException {
     List<InstagramPost> posts = getLastPosts(username);
     return posts.stream()
         .flatMap(post -> post.getTags().stream())
@@ -95,30 +111,43 @@ public class InstagramProfileService {
    * @return List of tags with total count of each tag's posts
    * @throws IOException If can't parse json response
    */
-  public Set<SimpleCountedTag> getLastTagsCounted(String username) throws IOException {
-    Set<SimpleCountedTag> result = new HashSet<>();
+  public Set<InstagramTagCounted> getLastTagsCounted(final String username) throws IOException {
+    Set<InstagramTagCounted> result = new HashSet<>();
     List<InstagramPost> posts = getLastPosts(username);
     Set<String> userTags = posts.stream()
         .flatMap(post -> post.getTags().stream())
         .collect(Collectors.toSet());
 
-    Set<SimpleCountedTag> existingTags = instagramTagRepository.findByNameIn(userTags).stream()
-        .map(SimpleCountedTag::new)
+    Set<InstagramTagCounted> existingTags = instagramTagRepository.findByNameIn(userTags).stream()
+        .map(InstagramTagCounted::new)
         .collect(Collectors.toSet());
 
     result.addAll(existingTags);
     userTags.removeAll(existingTags.stream()
-        .map(SimpleCountedTag::getTag)
+        .map(InstagramTagCounted::getTag)
         .collect(Collectors.toSet())
     );
 
     userTags.stream()
         .map(name -> instagramTagService.addTag(name))
+        .filter(list -> !list.isEmpty())
         .map(list -> list.get(0))
         .filter(Objects::nonNull)
-        .map(SimpleCountedTag::new)
+        .map(InstagramTagCounted::new)
         .forEach(result::add);
 
     return result;
   }
+
+  private InstagramProfile retrieveInstagramProfile(final String username) throws IOException {
+    Document document = Jsoup.connect(INSTAGRAM_URL + username).get();
+    String jsonData = document.body()
+        .getElementsByTag("script")
+        .first()
+        .childNode(0)
+        .toString();
+    String jsonString = jsonData.substring(JSON_KEY.length(), jsonData.length() - 1);
+    return new ObjectMapper().readValue(jsonString, InstagramProfile.class);
+  }
+
 }

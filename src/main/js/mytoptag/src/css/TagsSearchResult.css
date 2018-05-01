@@ -21,9 +21,5 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './css/index.css';
-import SearchInput from "./components/SearchInput.js"
 
-ReactDOM.render(<SearchInput />, document.getElementById("root"));
+/* todo implement */

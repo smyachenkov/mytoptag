@@ -23,51 +23,49 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import '../css/InstagramPostRow.css';
-import InstagramPostTag from './InstagramPostTag.js';
+import ReactTooltip from 'react-tooltip'
 
-const INSTAGRAM_POST_URL='https://www.instagram.com/p/';
-
-class InstagramPostRow extends Component {
+class InstagramPostTag extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-          shortCode: this.props.shortCode,
-          previewLink: this.props.previewLink,
-          tags: this.props.tags,
-          likes: this.props.likes
+          tag: this.props.tag,
+          count: this.props.count
         };
   }
 
   render() {
-    const postLink = INSTAGRAM_POST_URL + this.props.shortCode;
+    const tag = this.state.tag;
+    const tagToTooltipLength = 95+tag.length*4;
     return (
-      <div className="component-instagram-post-row">
-        <div className="component-instagram-post-likes">
-          ❤  {this.props.likes}
-        </div>
-        <div className="component-instagram-post-preview">
-          <a href={postLink} target="_blank">
-            <img src={this.props.previewLink} width="100" height="100" alt="view"/>
-          </a>
-        </div>
-        <div className="component-instagram-post-tags">
-          { this.props.tags.map(t =>
-            { return <InstagramPostTag className="component-instagram-post-tag" tag={t.tag} count={t.count}/> })
-          }
-        </div>
-      </div>
+      <span className="post-tag-entry">
+        <a data-tip data-for={'tag-stats-' + tag} data-event='click focus'>
+            <span>
+              <a>
+                {"#" + tag}
+              </a>
+            </span>
+        </a>
+        <ReactTooltip
+            id={'tag-stats-'+ tag}
+            type='info'
+            place="right"
+            effect="solid"
+            offset={{right: tagToTooltipLength, bottom: 9}}
+            getContent={[() => {
+              return "Posts with this tag:" + this.state.count
+              }]
+            }>
+        </ReactTooltip>
+      </span>
     );
   }
 }
 
-InstagramPostRow.propTypes = {
-  shortCode: PropTypes.string,
-  previewLink: PropTypes.string,
-  tags: PropTypes.array,
-  likes: PropTypes.number
+InstagramPostTag.propTypes = {
+  tag: PropTypes.string,
+  count: PropTypes.number
 };
 
-
-export default InstagramPostRow;
+export default InstagramPostTag;

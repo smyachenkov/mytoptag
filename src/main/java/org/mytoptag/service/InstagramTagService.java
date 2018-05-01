@@ -54,6 +54,26 @@ public class InstagramTagService {
   }
 
   /**
+   * Gets existing tag from repository or from Instagram if absent.
+   * @param name Tag
+   * @return InstagramTag entry
+   * @throws ObjectNotFoundException If tag does not exist in repository or on Instagram
+   */
+  public InstagramTag getTag(final String name) throws ObjectNotFoundException {
+    InstagramTag tag = instagramTagRepository.findByName(name);
+    if (tag != null) {
+      return tag;
+    } else {
+      tag = getTagFromWeb(name);
+      if (tag == null) {
+        throw new ObjectNotFoundException();
+      } else {
+        return instagramTagRepository.save(tag);
+      }
+    }
+  }
+
+  /**
    * Gets existing tag from repository.
    * @param name Tag
    * @return InstagramTag entry

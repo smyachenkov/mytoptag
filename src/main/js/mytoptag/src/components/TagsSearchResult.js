@@ -22,20 +22,8 @@
  *
  */
 
-package org.mytoptag.model.dto;
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import '../css/TagsSearchResult.css';
 
-import lombok.Data;
-import org.mytoptag.model.InstagramTag;
-
-@Data
-public class SimpleCountedTag {
-
-  private String tag;
-
-  private Long count;
-
-  public SimpleCountedTag(InstagramTag instagramTag) {
-    this.tag = instagramTag.getName();
-    this.count = instagramTag.getLastHistoryEntry().getCount();
-  }
-}
+// todo implement

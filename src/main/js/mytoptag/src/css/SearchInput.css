@@ -21,9 +21,27 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './css/index.css';
-import SearchInput from "./components/SearchInput.js"
+.search-button {
+     display: inline-block;
+     box-sizing: content-box;
+     cursor: pointer;
+     padding: 10px 20px;
+     border: 2px solid #b7649c;
+     border-radius: 1px;
+     font: normal 16px/20px Verdana, Geneva, sans-serif;
+     color: #ffffff;
+     background: #b7649c;
+     outline:none;
+}
 
-ReactDOM.render(<SearchInput />, document.getElementById("root"));
+.search-input {
+    width: 30%;
+    box-sizing: content-box;
+    cursor: auto;
+    padding: 10px 1% 10px;
+    border: 2px solid #cea7bc;
+    -webkit-border-radius: 1px;
+    border-radius: 1px;
+    font: normal 100%/normal Verdana, Geneva, sans-serif;
+    color: #000000;
+}

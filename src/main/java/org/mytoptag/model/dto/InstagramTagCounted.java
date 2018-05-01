@@ -21,9 +21,21 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './css/index.css';
-import SearchInput from "./components/SearchInput.js"
 
-ReactDOM.render(<SearchInput />, document.getElementById("root"));
+package org.mytoptag.model.dto;
+
+import lombok.Data;
+import org.mytoptag.model.InstagramTag;
+
+@Data
+public class InstagramTagCounted {
+
+  private String tag;
+
+  private Long count;
+
+  public InstagramTagCounted(InstagramTag instagramTag) {
+    this.tag = instagramTag.getName();
+    this.count = instagramTag.getLastHistoryEntry().getCount();
+  }
+}
