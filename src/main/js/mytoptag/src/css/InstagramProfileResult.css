@@ -29,6 +29,7 @@
 .component-sort-buttons {
   text-align:center;
   font-family: verdana;
+  padding: 0% 0% 1% 0%;
 }
 
 .component-switch-show  {
