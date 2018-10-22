@@ -25,42 +25,94 @@
 package org.mytoptag.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.mytoptag.model.InstagramPost;
 import org.mytoptag.model.InstagramProfile;
-import org.mytoptag.model.dto.InstagramPostCounted;
-import org.mytoptag.model.dto.InstagramTagCounted;
-import org.mytoptag.repository.InstagramTagRepository;
+import org.mytoptag.model.InstagramTag;
+import org.mytoptag.repository.InstagramPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class InstagramProfileService {
 
   private static final String INSTAGRAM_URL = "https://www.instagram.com/";
   private static final String JSON_KEY = "window._sharedData = ";
 
-  private InstagramTagRepository instagramTagRepository;
-  private InstagramTagService instagramTagService;
+  private InstagramTagService tagService;
+  private InstagramPostRepository postRepository;
 
   @Autowired
-  public InstagramProfileService(InstagramTagRepository instagramTagRepository,
-                                 InstagramTagService instagramTagService) {
-    this.instagramTagRepository = instagramTagRepository;
-    this.instagramTagService = instagramTagService;
+  public InstagramProfileService(
+      InstagramTagService instagramTagService,
+      InstagramPostRepository postRepository) {
+    this.tagService = instagramTagService;
+    this.postRepository = postRepository;
+  }
+
+  /**
+   * Import last posts of user.
+   *
+   * @param username Instagram account username
+   * @return Lists of InstagramPost
+   * @throws IOException If can't parse json response
+   */
+  public List<InstagramPost> importLastPosts(final String username) throws IOException {
+    log.info("importing posts for account {}", username);
+    final InstagramProfile profile = retrieveInstagramProfile(username);
+    List<InstagramPost> posts = profile.getPosts();
+    List<String> codes = posts.stream()
+        .map(InstagramPost::getShortCode)
+        .collect(Collectors.toList());
+    List<String> existingCodes = postRepository.findByShortCodeIn(codes).stream()
+        .map(InstagramPost::getShortCode)
+        .collect(Collectors.toList());
+    List<InstagramPost> result = posts.stream()
+        .filter(p -> !existingCodes.contains(p.getShortCode()))
+        .map(this::savePost).collect(Collectors.toList());
+    log.info("import for account {} is complete! {} new posts have been added",
+        username, result.size());
+    return result;
+  }
+
+  private InstagramPost savePost(InstagramPost post) {
+    log.info("saving posts {}", post.getShortCode());
+    InstagramPost existing = postRepository.findByIgId(post.getIgId());
+    if (existing != null) {
+      log.info("post with a code {} is already imported", post.getShortCode());
+      return existing;
+    }
+    log.info("saving new post {} to db", post.getShortCode());
+    List<InstagramTag> tags = tagService.addTag(tagsFromText(post.getText()));
+    post.setTags(new HashSet<>(tags));
+    return postRepository.save(post);
+  }
+
+  /**
+   * Retrieve existing posts from repo.
+   *
+   * @param shortCodes codes of instagram post
+   * @return list of posts
+   */
+  public List<InstagramPost> findPosts(List<String> shortCodes) {
+    return postRepository.findByShortCodeIn(shortCodes);
   }
 
   /**
    * Get last posts of user.
+   *
    * @param username Instagram account username
    * @return Lists of InstagramPost
    * @throws IOException If can't parse json response
@@ -68,75 +120,6 @@ public class InstagramProfileService {
   public List<InstagramPost> getLastPosts(final String username) throws IOException {
     final InstagramProfile profile = retrieveInstagramProfile(username);
     return profile.getPosts();
-  }
-
-  /**
-   * Get last posts of user.
-   * @param username Instagram account username
-   * @param counted count each tag total number
-   * @return Lists of InstagramPost
-   * @throws IOException If can't parse json response
-   */
-  public List<InstagramPostCounted> getLastPostsCounted(final String username,
-                                                        final boolean counted) throws IOException {
-    final List<InstagramPost> posts = retrieveInstagramProfile(username).getPosts();
-    if (!counted) {
-      return posts.stream()
-          .map(InstagramPostCounted::new)
-          .collect(Collectors.toList());
-    }
-    return posts.stream()
-        .map(p -> new InstagramPostCounted(p, p.getTags().stream()
-          .map(t -> new InstagramTagCounted(instagramTagService.getTag(t)))
-          .collect(Collectors.toList()))
-    ).collect(Collectors.toList());
-  }
-
-  /**
-   * Get tags in last posts of user.
-   * @param username Instagram account username
-   * @return Lists of tags
-   * @throws IOException If can't parse json response
-   */
-  public Set<String> getLastTags(final String username) throws IOException {
-    List<InstagramPost> posts = getLastPosts(username);
-    return posts.stream()
-        .flatMap(post -> post.getTags().stream())
-        .collect(Collectors.toCollection(TreeSet::new));
-  }
-
-  /**
-   * Get tags with count in last posts of user.
-   * @param username Instagram account username
-   * @return List of tags with total count of each tag's posts
-   * @throws IOException If can't parse json response
-   */
-  public Set<InstagramTagCounted> getLastTagsCounted(final String username) throws IOException {
-    Set<InstagramTagCounted> result = new HashSet<>();
-    List<InstagramPost> posts = getLastPosts(username);
-    Set<String> userTags = posts.stream()
-        .flatMap(post -> post.getTags().stream())
-        .collect(Collectors.toSet());
-
-    Set<InstagramTagCounted> existingTags = instagramTagRepository.findByNameIn(userTags).stream()
-        .map(InstagramTagCounted::new)
-        .collect(Collectors.toSet());
-
-    result.addAll(existingTags);
-    userTags.removeAll(existingTags.stream()
-        .map(InstagramTagCounted::getTag)
-        .collect(Collectors.toSet())
-    );
-
-    userTags.stream()
-        .map(name -> instagramTagService.addTag(name))
-        .filter(list -> !list.isEmpty())
-        .map(list -> list.get(0))
-        .filter(Objects::nonNull)
-        .map(InstagramTagCounted::new)
-        .forEach(result::add);
-
-    return result;
   }
 
   private InstagramProfile retrieveInstagramProfile(final String username) throws IOException {
@@ -148,6 +131,18 @@ public class InstagramProfileService {
         .toString();
     String jsonString = jsonData.substring(JSON_KEY.length(), jsonData.length() - 1);
     return new ObjectMapper().readValue(jsonString, InstagramProfile.class);
+  }
+
+  private Set<String> tagsFromText(String text) {
+    return Optional.ofNullable(text).map(
+        t -> Arrays.stream(text.split(" |\n"))
+            .filter(word -> word.contains("#"))
+            .map(word -> word.substring(word.indexOf('#'), word.length()))
+            .map(String::toLowerCase)
+            .map(tag -> tag.startsWith("#") ? tag.substring(1, tag.length()) : tag)
+            .sorted()
+            .collect(Collectors.toSet())
+    ).orElse(Collections.EMPTY_SET);
   }
 
 }

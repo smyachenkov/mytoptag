@@ -22,37 +22,17 @@
  *
  */
 
-package org.mytoptag.config;
+package org.mytoptag.repository;
 
-import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.mytoptag.model.InstagramPost;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Configuration
-@PropertySource("mytoptag.properties")
-@EnableMongoRepositories(basePackages = "org.mytoptag.repository")
-public class MongoConfig extends AbstractMongoConfiguration {
+import java.util.List;
 
-  @Value("${db.name}")
-  private String databaseName;
+public interface InstagramPostRepository extends JpaRepository<InstagramPost, String> {
 
-  @Value("${db.host}")
-  private String host;
+  InstagramPost findByIgId(Long igId);
 
-  @Value("${db.port}")
-  private Integer port;
+  List<InstagramPost> findByShortCodeIn(List<String> shortCodes);
 
-  @Override
-  protected String getDatabaseName() {
-    return databaseName;
-  }
-
-  @Override
-  public Mongo mongo() throws Exception {
-    return new MongoClient(host, port);
-  }
 }

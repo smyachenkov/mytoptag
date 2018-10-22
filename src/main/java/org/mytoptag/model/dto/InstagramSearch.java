@@ -41,6 +41,6 @@ public class InstagramSearch {
 
   private List users;
 
-  private List<InstagramTag> hashtags;
+  private List<InstagramTagSearchResult> hashtags;
 
 }

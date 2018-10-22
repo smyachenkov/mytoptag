@@ -25,16 +25,20 @@
 package org.mytoptag.repository;
 
 import org.mytoptag.model.InstagramTag;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
-public interface InstagramTagRepository extends MongoRepository<InstagramTag, String> {
+public interface InstagramTagRepository extends JpaRepository<InstagramTag, String> {
 
-  InstagramTag findByName(String name);
+  InstagramTag findByTitle(String title);
 
-  List<InstagramTag> findByNameIn(Set<String> names);
+  List<InstagramTag> findByTitleIn(Set<String> names);
 
   List<InstagramTag> findAll();
+
+  @Transactional
+  void deleteByTitle(String title);
 }

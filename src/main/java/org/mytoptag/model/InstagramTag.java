@@ -24,58 +24,47 @@
 
 package org.mytoptag.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mytoptag.model.deserializer.InstagramSearchDeserializer;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-@Document(collection = "tags")
 @Data
 @NoArgsConstructor
-@JsonDeserialize(using = InstagramSearchDeserializer.class)
+@Entity
+@Table(name = "TAG")
 public class InstagramTag {
 
   @Id
-  private String id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-  private String name;
+  private String title;
 
-  @Field("igId")
   private Long igId;
 
-  private LinkedList<InstagramTagHistory> history;
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JoinColumn(name = "TAG_ID")
+  private List<InstagramTagCount> history = new ArrayList<>();
 
-  /**
-   * Ctor.
-   * @param name Tag name
-   * @param count Total tag count
-   * @param igId Instagram id of a tag
-   */
-  public InstagramTag(String name, Long count, Long igId) {
-    this.name = name.toLowerCase();
-    this.igId = igId;
-    LinkedList<InstagramTagHistory> tagHistory = new LinkedList<>();
-    tagHistory.add(new InstagramTagHistory(new Date(), count));
-    this.history = tagHistory;
-  }
-
-  /**
-   * Ctor.
-   * @param name Tag name
-   * @param igId Instagram id of a tag
-   */
-  public InstagramTag(String name, Long igId) {
-    this.name = name.toLowerCase();
+  public InstagramTag(String title, Long igId) {
+    this.title = title;
     this.igId = igId;
   }
 
-  public InstagramTagHistory getLastHistoryEntry() {
-    return history.getLast();
+  @JsonIgnore
+  public InstagramTagCount getLastCount() {
+    return history.isEmpty() ? null : history.get(history.size() - 1);
   }
 }

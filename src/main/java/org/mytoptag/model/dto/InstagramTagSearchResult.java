@@ -24,18 +24,22 @@
 
 package org.mytoptag.model.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.mytoptag.model.InstagramTag;
+import lombok.NoArgsConstructor;
+import org.mytoptag.model.deserializer.InstagramSearchDeserializer;
 
 @Data
-public class InstagramTagCounted {
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonDeserialize(using = InstagramSearchDeserializer.class)
+public class InstagramTagSearchResult {
 
-  private String tag;
+  private String title;
+
+  private Long igId;
 
   private Long count;
 
-  public InstagramTagCounted(InstagramTag instagramTag) {
-    this.tag = instagramTag.getName();
-    this.count = instagramTag.getLastHistoryEntry().getCount();
-  }
 }
