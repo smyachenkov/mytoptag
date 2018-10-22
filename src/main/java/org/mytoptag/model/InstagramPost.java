@@ -25,65 +25,80 @@
 package org.mytoptag.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
 
 @Data
+@NoArgsConstructor
+@Entity
+@Table(name = "POST")
 public class InstagramPost {
 
-  private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
+  @Column(name = "IG_ID")
+  private Long igId;
+
+  @Column(name = "POST_TEXT")
   private String text;
 
-  private List<String> tags;
+  @Column(name = "POST_DATE")
+  private Long date;
+
+  @ManyToMany(cascade = {
+      CascadeType.PERSIST,
+      CascadeType.MERGE
+      })
+  @JoinTable(name = "TAGINPOST",
+      joinColumns = @JoinColumn(name = "POST_ID"),
+      inverseJoinColumns = @JoinColumn(name = "TAG_ID")
+  )
+  private Set<InstagramTag> tags = new HashSet<>();
+
+  @Column(name = "PREVIEW_LINK")
+  private String previewLink;
+
+  @Column(name = "SHORT_CODE")
+  private String shortCode;
 
   private int likes;
 
-  private String previewLink;
-
-  private String shortCode;
-
   /**
    * Ctor.
-   * @param id Instagram post id
-   * @param text Text of a post
-   */
-  public InstagramPost(Long id, String text) {
-    this.id = id;
-    this.text = text;
-    this.tags = tagsFromText(text);
-  }
-
-  /**
-   * Ctor.
-   * @param id Instagram post id
-   * @param text Text of a post
-   * @param likes Number of likes
+   *
+   * @param igId        Instagram post id
+   * @param text        Text of a post
+   * @param likes       Number of likes
    * @param previewLink Link to small preview pic
-   * @param shortCode Code for post url
+   * @param shortCode   Code for post url
    */
-  public InstagramPost(Long id, String text, int likes, String previewLink, String shortCode) {
-    this.id = id;
+  public InstagramPost(Long igId,
+                       String text,
+                       int likes,
+                       String previewLink,
+                       String shortCode,
+                       Long date) {
+    this.igId = igId;
     this.text = text;
     this.likes = likes;
     this.previewLink = previewLink;
     this.shortCode = shortCode;
-    this.tags = tagsFromText(text);
+    this.date = date;
   }
 
-  private List<String> tagsFromText(String text) {
-    return Optional.ofNullable(text).map(
-        t -> Arrays.stream(text.split(" |\n"))
-            .filter(word -> word.contains("#"))
-            .map(word -> word.substring(word.indexOf('#'), word.length()))
-            .map(String::toLowerCase)
-            .map(tag -> tag.startsWith("#") ? tag.substring(1, tag.length()) : tag)
-            .sorted()
-            .collect(Collectors.toList())
-    ).orElse(new ArrayList<>());
-  }
 }

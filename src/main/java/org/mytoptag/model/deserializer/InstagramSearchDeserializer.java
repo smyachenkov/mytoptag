@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import org.mytoptag.model.InstagramTag;
 import org.mytoptag.model.dto.InstagramSearch;
+import org.mytoptag.model.dto.InstagramTagSearchResult;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,19 +51,19 @@ public class InstagramSearchDeserializer extends StdDeserializer<InstagramSearch
   public InstagramSearch deserialize(JsonParser parser, DeserializationContext context)
       throws IOException {
     final JsonNode node = parser.getCodec().readTree(parser);
-    final List<InstagramTag> tags = parseTags(node);
+    final List<InstagramTagSearchResult> tags = parseTags(node);
     final List users = new ArrayList();
     return new InstagramSearch(users, tags);
   }
 
-  private List<InstagramTag> parseTags(JsonNode node) {
-    final List<InstagramTag> result = new ArrayList<>();
+  private List<InstagramTagSearchResult> parseTags(JsonNode node) {
+    final List<InstagramTagSearchResult> result = new ArrayList<>();
     for (Iterator<JsonNode> it = node.get("hashtags").elements(); it.hasNext();) {
       JsonNode tagNode = it.next().get("hashtag");
       String name = tagNode.get("name").asText();
       Long igId = tagNode.get("id").asLong();
-      Long count = tagNode.get("media_count").asLong();
-      result.add(new InstagramTag(name, count, igId));
+      Long count = tagNode.get("media_count").longValue();
+      result.add(new InstagramTagSearchResult(name, igId, count));
     }
     return result;
   }

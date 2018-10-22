@@ -24,7 +24,6 @@
 
 package org.mytoptag.controller;
 
-import org.mytoptag.model.InstagramTag;
 import org.mytoptag.model.dto.ListResponseEntity;
 import org.mytoptag.service.InstagramTagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +33,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/tag",
-                produces = {"application/json"},
-                method = RequestMethod.GET)
+@RequestMapping(
+    value = "/tag",
+    produces = {"application/json"}
+)
 public class TagController {
 
   private InstagramTagService instagramTagService;
@@ -50,18 +50,40 @@ public class TagController {
     this.instagramTagService = instagramTagService;
   }
 
-  @RequestMapping(value = "/{name}",
-                  produces = {"application/json"},
-                  method = RequestMethod.GET)
-  public InstagramTag getTag(@PathVariable("name") String name) {
-    return instagramTagService.getTag(name);
+  /**
+   * Get existing tags.
+   * @param titles tags titles
+   * @return list of existing tags
+   */
+  @RequestMapping(
+      value = "/{title}",
+      produces = {"application/json"},
+      method = RequestMethod.GET
+  )
+  public ListResponseEntity getTag(@PathVariable("title") Set<String> titles) {
+    return new ListResponseEntity(instagramTagService.getTags(titles));
   }
 
-  @RequestMapping(value = "/add/{name}",
-                  produces = {"application/json"},
-                  method = RequestMethod.GET)
-  public ListResponseEntity addTag(@PathVariable("name") List<String> tags) {
-    List<InstagramTag> result = instagramTagService.addTag(tags);
-    return new ListResponseEntity(result);
+  /**
+   * Delete tags from db.
+   * @param titles tags titles
+   */
+  @RequestMapping(
+      value = "/{title}",
+      produces = {"application/json"},
+      method = RequestMethod.DELETE
+  )
+  public void deleteTag(@PathVariable("title") Set<String> titles) {
+    // todo implement
   }
+
+  @RequestMapping(
+      value = "/import/{title}",
+      produces = {"application/json"},
+      method = RequestMethod.GET
+  )
+  public ListResponseEntity addTag(@PathVariable("title") Set<String> tags) {
+    return new ListResponseEntity(instagramTagService.addTag(tags));
+  }
+
 }

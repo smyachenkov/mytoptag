@@ -24,9 +24,8 @@
 
 package org.mytoptag.controller;
 
-import org.mytoptag.model.InstagramPost;
 import org.mytoptag.model.dto.ListResponseEntity;
-import org.mytoptag.service.InstagramProfileService;
+import org.mytoptag.service.InstagramTagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,62 +33,40 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @CrossOrigin
 @RequestMapping(
-    value = "/profile",
-    produces = {"application/json"},
-    method = RequestMethod.GET
+    value = "/update",
+    produces = {"application/json"}
 )
-public class ProfileController {
+public class UpdateController {
 
-  private InstagramProfileService instagramProfileService;
+  private InstagramTagService tagService;
 
   @Autowired
-  public ProfileController(InstagramProfileService instagramProfileService) {
-    this.instagramProfileService = instagramProfileService;
+  public UpdateController(InstagramTagService tagService) {
+    this.tagService = tagService;
   }
 
-  /**
-   * Import last posts of user.
-   *
-   * @param name Instagram account username
-   * @return List of last 12 posts
-   */
   @RequestMapping(
-      value = "/import/{name}",
+      value = "/tags",
       produces = {"application/json"},
       method = RequestMethod.GET
   )
-  public ListResponseEntity importLastPosts(@PathVariable("name") String name) {
-    try {
-      return new ListResponseEntity(instagramProfileService.importLastPosts(name));
-    } catch (IOException ex) {
-      throw new ObjectNotFoundException();
-    }
+  public void updateTags() {
+    tagService.updateAllTagHistory();
   }
 
-  /**
-   * Get last posts of user.
-   *
-   * @param name Instagram account username
-   * @return List of last 12 posts
-   */
+
   @RequestMapping(
-      value = "/view/{name}",
+      value = "/tag/{titles}",
       produces = {"application/json"},
       method = RequestMethod.GET
   )
-  public ListResponseEntity getLastPosts(@PathVariable("name") String name) {
-    try {
-      List<InstagramPost> posts = instagramProfileService.getLastPosts(name);
-      return new ListResponseEntity(posts);
-    } catch (IOException ex) {
-      throw new ObjectNotFoundException();
-    }
+  public ListResponseEntity updateTags(@PathVariable("titles") Set<String> titles) {
+    return new ListResponseEntity(tagService.updateTagHistory(tagService.getTags(titles)));
   }
 
 }

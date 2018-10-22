@@ -22,55 +22,11 @@
  *
  */
 
-package org.mytoptag.model.dto;
+package org.mytoptag.repository;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.mytoptag.model.InstagramPost;
+import org.mytoptag.model.InstagramTagCount;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-@Getter
-@Setter
-public class InstagramPostCounted {
-
-  private Long id;
-
-  private String text;
-
-  private int likes;
-
-  private String previewLink;
-
-  private String shortCode;
-
-  private List<InstagramTagCounted> tags;
-
-  /**
-   * Ctor.
-   * @param post InstagramPost
-   */
-  public InstagramPostCounted(final InstagramPost post) {
-    this.id = post.getId();
-    this.text = post.getText();
-    this.likes = post.getLikes();
-    this.previewLink = post.getPreviewLink();
-    this.shortCode = post.getShortCode();
-  }
-
-  /**
-   * Ctor.
-   * @param post InstagramPost
-   * @param tags List of InstagramTagCounted
-   */
-  public InstagramPostCounted(final InstagramPost post,
-                              final List<InstagramTagCounted> tags) {
-    this.id = post.getId();
-    this.text = post.getText();
-    this.likes = post.getLikes();
-    this.previewLink = post.getPreviewLink();
-    this.shortCode = post.getShortCode();
-    this.tags = tags;
-  }
+public interface InstagramTagCountRepository extends JpaRepository<InstagramTagCount, String> {
 
 }

@@ -24,21 +24,46 @@
 
 package org.mytoptag.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Data
-@Document
 @NoArgsConstructor
 @AllArgsConstructor
-public class InstagramTagHistory {
+@Entity
+@Table(name = "TAGCOUNT")
+public class InstagramTagCount {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id = 0L;
+
+  @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JsonIgnore
+  private InstagramTag tag;
+
+  @Column(name = "COUNT_DATE", columnDefinition = "DATE")
+  @CreationTimestamp
   private Date date;
 
   private Long count;
 
+  public InstagramTagCount(InstagramTag tag, Long count) {
+    this.tag = tag;
+    this.count = count;
+  }
 }

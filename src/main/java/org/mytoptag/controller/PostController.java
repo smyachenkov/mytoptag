@@ -24,7 +24,6 @@
 
 package org.mytoptag.controller;
 
-import org.mytoptag.model.InstagramPost;
 import org.mytoptag.model.dto.ListResponseEntity;
 import org.mytoptag.service.InstagramProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,62 +33,40 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
 @CrossOrigin
 @RequestMapping(
-    value = "/profile",
-    produces = {"application/json"},
-    method = RequestMethod.GET
+    value = "/post",
+    produces = {"application/json"}
 )
-public class ProfileController {
+public class PostController {
 
-  private InstagramProfileService instagramProfileService;
+  private InstagramProfileService profileService;
 
   @Autowired
-  public ProfileController(InstagramProfileService instagramProfileService) {
-    this.instagramProfileService = instagramProfileService;
+  public PostController(InstagramProfileService profileService) {
+    this.profileService = profileService;
   }
 
-  /**
-   * Import last posts of user.
-   *
-   * @param name Instagram account username
-   * @return List of last 12 posts
-   */
   @RequestMapping(
-      value = "/import/{name}",
+      value = "/{shortCodes}",
       produces = {"application/json"},
       method = RequestMethod.GET
   )
-  public ListResponseEntity importLastPosts(@PathVariable("name") String name) {
-    try {
-      return new ListResponseEntity(instagramProfileService.importLastPosts(name));
-    } catch (IOException ex) {
-      throw new ObjectNotFoundException();
-    }
+  public ListResponseEntity findPost(@PathVariable("shortCodes") List<String> shortCodes) {
+    return new ListResponseEntity(profileService.findPosts(shortCodes));
   }
 
-  /**
-   * Get last posts of user.
-   *
-   * @param name Instagram account username
-   * @return List of last 12 posts
-   */
   @RequestMapping(
-      value = "/view/{name}",
+      value = "/import/{shortCodes}",
       produces = {"application/json"},
       method = RequestMethod.GET
   )
-  public ListResponseEntity getLastPosts(@PathVariable("name") String name) {
-    try {
-      List<InstagramPost> posts = instagramProfileService.getLastPosts(name);
-      return new ListResponseEntity(posts);
-    } catch (IOException ex) {
-      throw new ObjectNotFoundException();
-    }
+  public ListResponseEntity importPosts(@PathVariable("shortCodes") List<String> shortCodes) {
+    // todo implement
+    return new ListResponseEntity(shortCodes);
   }
 
 }

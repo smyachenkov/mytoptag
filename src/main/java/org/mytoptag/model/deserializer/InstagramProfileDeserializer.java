@@ -32,6 +32,7 @@ import org.mytoptag.model.InstagramPost;
 import org.mytoptag.model.InstagramProfile;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +94,10 @@ public class InstagramProfileDeserializer extends StdDeserializer<InstagramProfi
       String shortCode = mediaNode
           .get("shortcode")
           .asText();
-      posts.add(new InstagramPost(id, text, likedBy, previewLink, shortCode));
+      Long timeStamp = mediaNode
+          .get("taken_at_timestamp")
+          .asLong();
+      posts.add(new InstagramPost(id, text, likedBy, previewLink, shortCode, timeStamp));
     }
     return posts;
   }
