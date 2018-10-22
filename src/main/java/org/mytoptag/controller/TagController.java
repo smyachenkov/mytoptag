@@ -74,9 +74,15 @@ public class TagController {
       method = RequestMethod.DELETE
   )
   public void deleteTag(@PathVariable("title") Set<String> titles) {
-    // todo implement
+    instagramTagService.deleteTags(titles);
   }
 
+  /**
+   * Import new tags from instagram.
+   *
+   * @param tags set of tags titles
+   * @return list of created tags
+   */
   @RequestMapping(
       value = "/import/{title}",
       produces = {"application/json"},

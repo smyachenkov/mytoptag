@@ -100,6 +100,12 @@ public class InstagramProfileService {
     return postRepository.save(post);
   }
 
+  /**
+   * Retrieve existing posts from repo.
+   *
+   * @param shortCodes codes of instagram post
+   * @return list of posts
+   */
   public List<InstagramPost> findPosts(List<String> shortCodes) {
     return postRepository.findByShortCodeIn(shortCodes);
   }

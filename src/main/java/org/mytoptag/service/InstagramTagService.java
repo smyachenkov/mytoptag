@@ -164,7 +164,7 @@ public class InstagramTagService {
    *
    * @param tag InstagramTag entry
    */
-  public InstagramTagCount updateTagHistory(InstagramTag tag) {
+  private InstagramTagCount updateTagHistory(InstagramTag tag) {
     try {
       log.info("updating history for tag #{}", tag.getTitle());
       if (tag.getLastCount() != null && getCurrentDate().equals(tag.getLastCount().getDate())) {
@@ -224,4 +224,17 @@ public class InstagramTagService {
     }
   }
 
+  /**
+   * Delete tag from repo.
+   *
+   * @param titles list of tags by titles
+   */
+  public void deleteTags(Set<String> titles) {
+    titles.forEach(t -> {
+        log.info("deleting tag #{} from repo", t);
+        instagramTagRepository.deleteByTitle(t);
+        log.info("tag #{} is deleted");
+      }
+    );
+  }
 }

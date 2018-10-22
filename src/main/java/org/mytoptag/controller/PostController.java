@@ -50,6 +50,12 @@ public class PostController {
     this.profileService = profileService;
   }
 
+  /**
+   * Retrieve posts from repo.
+   *
+   * @param shortCodes codes of a post
+   * @return list of retrieved posts
+   */
   @RequestMapping(
       value = "/{shortCodes}",
       produces = {"application/json"},
@@ -59,6 +65,11 @@ public class PostController {
     return new ListResponseEntity(profileService.findPosts(shortCodes));
   }
 
+  /**
+   * Import new posts from instagram to db
+   * @param shortCodes codes of a post
+   * @return list of created posts
+   */
   @RequestMapping(
       value = "/import/{shortCodes}",
       produces = {"application/json"},

@@ -50,6 +50,10 @@ public class UpdateController {
     this.tagService = tagService;
   }
 
+  /**
+   * Update all tags history info.
+   *
+   */
   @RequestMapping(
       value = "/tags",
       produces = {"application/json"},
@@ -60,6 +64,12 @@ public class UpdateController {
   }
 
 
+  /**
+   * Update tags history info
+   *
+   * @param titles titles of tags
+   * @return list of updated tags
+   */
   @RequestMapping(
       value = "/tag/{titles}",
       produces = {"application/json"},
