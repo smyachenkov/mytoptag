@@ -27,9 +27,9 @@ package org.mytoptag.repository;
 import org.mytoptag.model.InstagramTag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
+import javax.transaction.Transactional;
 
 public interface InstagramTagRepository extends JpaRepository<InstagramTag, String> {
 

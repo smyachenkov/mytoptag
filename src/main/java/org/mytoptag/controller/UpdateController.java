@@ -65,7 +65,7 @@ public class UpdateController {
 
 
   /**
-   * Update tags history info
+   * Update tags history info.
    *
    * @param titles titles of tags
    * @return list of updated tags

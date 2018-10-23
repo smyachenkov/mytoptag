@@ -231,10 +231,10 @@ public class InstagramTagService {
    */
   public void deleteTags(Set<String> titles) {
     titles.forEach(t -> {
-        log.info("deleting tag #{} from repo", t);
-        instagramTagRepository.deleteByTitle(t);
-        log.info("tag #{} is deleted");
-      }
+          log.info("deleting tag #{} from repo", t);
+          instagramTagRepository.deleteByTitle(t);
+          log.info("tag #{} is deleted");
+        }
     );
   }
 }
