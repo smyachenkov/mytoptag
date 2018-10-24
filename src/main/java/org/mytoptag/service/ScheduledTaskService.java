@@ -38,7 +38,7 @@ public class ScheduledTaskService {
     this.instagramTagService = instagramTagService;
   }
 
-  @Scheduled(cron = "0 1 * * *")
+  @Scheduled(cron = "0 0 3 * * *")
   public void updateAllTagHistory() {
     instagramTagService.updateAllTagHistory();
   }
