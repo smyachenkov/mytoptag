@@ -24,21 +24,18 @@
 
 package org.mytoptag.repository;
 
-import org.mytoptag.model.InstagramTag;
+import org.mytoptag.model.Compatibility;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
-import java.util.Set;
 import javax.transaction.Transactional;
 
-public interface InstagramTagRepository extends JpaRepository<InstagramTag, String> {
+public interface CompatibilityRepository extends JpaRepository<Compatibility, Integer> {
 
-  InstagramTag findByTitle(String title);
-
-  List<InstagramTag> findByTitleIn(Set<String> names);
-
-  List<InstagramTag> findAll();
-
+  @Modifying
   @Transactional
-  void deleteByTitle(String title);
+  @Query(value = "truncate table COMPATIBILITY", nativeQuery = true)
+  void clearCompatibilityMatrix();
+
 }

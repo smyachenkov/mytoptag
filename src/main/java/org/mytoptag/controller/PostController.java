@@ -66,7 +66,7 @@ public class PostController {
   }
 
   /**
-   * Import new posts from instagram to db
+   * Import new posts from instagram to db.
    * @param shortCodes codes of a post
    * @return list of created posts
    */

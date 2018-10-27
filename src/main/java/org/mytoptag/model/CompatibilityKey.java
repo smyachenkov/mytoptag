@@ -22,23 +22,26 @@
  *
  */
 
-package org.mytoptag.repository;
+package org.mytoptag.model;
 
-import org.mytoptag.model.InstagramTag;
-import org.springframework.data.jpa.repository.JpaRepository;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
-import java.util.Set;
-import javax.transaction.Transactional;
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
-public interface InstagramTagRepository extends JpaRepository<InstagramTag, String> {
+@Embeddable
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class CompatibilityKey implements Serializable {
 
-  InstagramTag findByTitle(String title);
+  @Column(name = "tag_a")
+  private Integer tagA;
 
-  List<InstagramTag> findByTitleIn(Set<String> names);
+  @Column(name = "tag_b")
+  private Integer tagB;
 
-  List<InstagramTag> findAll();
-
-  @Transactional
-  void deleteByTitle(String title);
 }
