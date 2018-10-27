@@ -71,18 +71,18 @@ public class InstagramTagService {
    * @throws ObjectNotFoundException If tag does not exist in repository or on Instagram
    */
   public InstagramTag getTag(final String name) throws ObjectNotFoundException {
-    log.info("retrieving tag {} from repository ", name);
+    log.info("retrieving tag #{} from repository ", name);
     InstagramTag tag = instagramTagRepository.findByTitle(name);
     if (tag != null) {
       return tag;
     } else {
-      log.info("tag {} is absent in repo, retrieving from web", name);
+      log.info("tag #{} is absent in repo, retrieving from web", name);
       tag = getTagFromWeb(name);
       if (tag == null) {
-        log.error("failed to retrieve tag {} from instagram", name);
+        log.error("failed to retrieve tag #{} from instagram", name);
         throw new ObjectNotFoundException();
       } else {
-        log.error("saving new tag {} to repo", name);
+        log.error("saving new tag #{} to repo", name);
         return instagramTagRepository.save(tag);
       }
     }
@@ -107,10 +107,10 @@ public class InstagramTagService {
    * @throws ObjectNotFoundException If tag does not exist in repository
    */
   private InstagramTag getExistingTag(String name) throws ObjectNotFoundException {
-    log.info("retrieving tag {} from repository ", name);
+    log.info("retrieving tag #{} from repository ", name);
     InstagramTag tag = instagramTagRepository.findByTitle(name);
     if (tag == null) {
-      log.error("failed to retrieve tag {} from repo", name);
+      log.error("failed to retrieve tag #{} from repo", name);
       throw new ObjectNotFoundException();
     }
     return tag;
@@ -125,15 +125,15 @@ public class InstagramTagService {
   public List<InstagramTag> addTag(Set<String> tags) {
     List<InstagramTag> newTags = new ArrayList<>();
     for (String tag : tags) {
-      log.info("retrieving tag {} from repository ", tag);
+      log.info("retrieving tag #{} from repository ", tag);
       InstagramTag existingTag = instagramTagRepository.findByTitle(tag);
       if (existingTag != null) {
         newTags.add(existingTag);
       } else {
-        log.info("tag {} is absent in repo, retrieving from web", tag);
+        log.info("tag #{} is absent in repo, retrieving from web", tag);
         InstagramTag newTag = getTagFromWeb(tag);
         if (newTag != null) {
-          log.info("saving new tag {}", newTag.getTitle());
+          log.info("saving new tag #{}", newTag.getTitle());
           newTags.add(instagramTagRepository.save(newTag));
         }
       }
@@ -186,7 +186,7 @@ public class InstagramTagService {
       log.info("new #{} count is {}", tag.getTitle(), count.getCount());
       return instagramTagCountRepository.save(count);
     } catch (IOException exception) {
-      log.error("Search failed for tag {}", tag);
+      log.error("Search failed for tag #{}", tag);
       return null;
     }
   }
@@ -208,7 +208,7 @@ public class InstagramTagService {
    */
   private InstagramTag getTagFromWeb(String title) {
     try {
-      log.info("retrieving tag {} from web", title);
+      log.info("retrieving tag #{} from web", title);
       RestTemplate restTemplate = new RestTemplate();
       String responseJson = restTemplate.getForObject(INSTAGRAM_SEARCH_URL, String.class, title);
       InstagramSearch search = new ObjectMapper().readValue(responseJson, InstagramSearch.class);
@@ -219,7 +219,7 @@ public class InstagramTagService {
           .map(s -> new InstagramTag(s.getTitle(), s.getIgId()))
           .orElse(null);
     } catch (IOException exception) {
-      log.error("Search failed for tag {}", title);
+      log.error("Search failed for tag #{}", title);
       return null;
     }
   }
