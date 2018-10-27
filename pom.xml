@@ -86,6 +86,7 @@
                             <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>
                             <failsOnError>true</failsOnError>
+                            <violationSeverity>warning</violationSeverity>
                         </configuration>
                         <goals>
                             <goal>check</goal>

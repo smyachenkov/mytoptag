@@ -22,28 +22,28 @@
  *
  */
 
-package org.mytoptag.repository;
+package org.mytoptag.model;
 
-import org.mytoptag.model.InstagramPost;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-public interface InstagramPostRepository extends JpaRepository<InstagramPost, String> {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "COMPATIBILITY")
+public class Compatibility {
 
-  InstagramPost findByIgId(Long igId);
+  @EmbeddedId
+  private CompatibilityKey id;
 
-  List<InstagramPost> findByShortCodeIn(List<String> shortCodes);
-
-  @Query(value = "select count(1) from "
-      + "(select post_id "
-      + "from taginpost "
-      + "where tag_id in(:tags) "
-      + "group by post_id "
-      + "having count(tag_id) = :size) p",
-      nativeQuery = true)
-  Integer countByTagsIn(@Param("tags") List<Integer> tags, @Param("size") Integer size);
+  @Column(name = "compatibility")
+  private Double compatibility;
 
 }

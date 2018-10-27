@@ -24,26 +24,18 @@
 
 package org.mytoptag.repository;
 
-import org.mytoptag.model.InstagramPost;
+import org.mytoptag.model.Compatibility;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+import javax.transaction.Transactional;
 
-public interface InstagramPostRepository extends JpaRepository<InstagramPost, String> {
+public interface CompatibilityRepository extends JpaRepository<Compatibility, Integer> {
 
-  InstagramPost findByIgId(Long igId);
-
-  List<InstagramPost> findByShortCodeIn(List<String> shortCodes);
-
-  @Query(value = "select count(1) from "
-      + "(select post_id "
-      + "from taginpost "
-      + "where tag_id in(:tags) "
-      + "group by post_id "
-      + "having count(tag_id) = :size) p",
-      nativeQuery = true)
-  Integer countByTagsIn(@Param("tags") List<Integer> tags, @Param("size") Integer size);
+  @Modifying
+  @Transactional
+  @Query(value = "truncate table COMPATIBILITY", nativeQuery = true)
+  void clearCompatibilityMatrix();
 
 }
