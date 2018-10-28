@@ -40,7 +40,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -86,10 +88,10 @@ public class SuggestionService {
     final int matrixSize = tags.length;
     for (int i = 0; i < matrixSize; i++) {
       Integer tag = tags[i];
-      Integer allPostsOccurrence = countPostsWithTags(Collections.singletonList(tag));
+      Integer allPostsOccurrence = postRepository.countPostsWithTags(Collections.singletonList(tag));
       List<Compatibility> compatibilities = new ArrayList<>();
       for (int j = matrixSize - 1; j > i; j--) {
-        Integer compatiblePosts = countPostsWithTags(Arrays.asList(tag, tags[j]));
+        Integer compatiblePosts = postRepository.countPostsWithTags(Arrays.asList(tag, tags[j]));
         BigDecimal compatibilityValue = BigDecimal.valueOf(compatiblePosts)
             .divide(BigDecimal.valueOf(allPostsOccurrence), SCALE, BigDecimal.ROUND_HALF_UP);
         compatibilities.add(
@@ -107,10 +109,6 @@ public class SuggestionService {
     }
   }
 
-  private Integer countPostsWithTags(final List<Integer> tags) {
-    return postRepository.countByTagsIn(tags, tags.size());
-  }
-
   private void saveInBatches(final List<Compatibility> compatibilities) {
     List<Compatibility> batch = new ArrayList<>();
     for (int i = 0; i < compatibilities.size(); i++) {
@@ -120,6 +118,12 @@ public class SuggestionService {
         batch.clear();
       }
     }
+  }
+
+  // todo implement
+  public Set<InstagramTag> getRecommendations(final Set<String> tagNames) {
+    List<InstagramTag> originalTags = tagRepository.findByTitleIn(tagNames);
+    return new HashSet<>(originalTags);
   }
 
 }

@@ -24,8 +24,10 @@
 
 package org.mytoptag.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.mytoptag.model.InstagramPost;
 import org.mytoptag.model.dto.ListResponseEntity;
+import org.mytoptag.model.response.ProfileImportResponse;
 import org.mytoptag.service.InstagramProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -35,10 +37,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @CrossOrigin
+@Slf4j
 @RequestMapping(
     value = "/profile",
     produces = {"application/json"},
@@ -54,22 +59,30 @@ public class ProfileController {
   }
 
   /**
-   * Import last posts of user.
+   * Import last posts of users.
    *
-   * @param name Instagram account username
-   * @return List of last 12 posts
+   * @param names set of account usernames
+   * @return ProfileImportResponse
    */
   @RequestMapping(
-      value = "/import/{name}",
+      value = "/import/{names}",
       produces = {"application/json"},
       method = RequestMethod.GET
   )
-  public ListResponseEntity importLastPosts(@PathVariable("name") String name) {
-    try {
-      return new ListResponseEntity(instagramProfileService.importLastPosts(name));
-    } catch (IOException ex) {
-      throw new ObjectNotFoundException();
-    }
+  public ProfileImportResponse importLastPosts(@PathVariable("names") Set<String> names) {
+    List<String> imported  = new ArrayList<>();
+    List<String> failed = new ArrayList<>();
+    names.forEach(name -> {
+          try {
+            instagramProfileService.importLastPosts(name);
+            imported.add(name);
+          } catch (Exception ex) {
+            log.error("error importing profile {}! {}", name, ex);
+            failed.add(name);
+          }
+        }
+    );
+    return new ProfileImportResponse(imported, failed);
   }
 
   /**
