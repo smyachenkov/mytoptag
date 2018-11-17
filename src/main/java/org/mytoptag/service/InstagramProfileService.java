@@ -88,7 +88,7 @@ public class InstagramProfileService {
   }
 
   private InstagramPost savePost(InstagramPost post) {
-    log.info("saving posts {}", post.getShortCode());
+    log.info("saving post {}", post.getShortCode());
     InstagramPost existing = postRepository.findByIgId(post.getIgId());
     if (existing != null) {
       log.info("post with a code {} is already imported", post.getShortCode());
@@ -136,11 +136,10 @@ public class InstagramProfileService {
   private Set<String> tagsFromText(String text) {
     return Optional.ofNullable(text).map(
         t -> Arrays.stream(text.split(" |\n"))
-            .filter(word -> word.contains("#"))
+            .filter(word -> word.startsWith("#"))
             .map(word -> word.substring(word.indexOf('#'), word.length()))
             .map(String::toLowerCase)
-            .map(tag -> tag.startsWith("#") ? tag.substring(1, tag.length()) : tag)
-            .sorted()
+            .flatMap(word -> Arrays.stream(word.split("#")).skip(1))
             .collect(Collectors.toSet())
     ).orElse(Collections.EMPTY_SET);
   }
