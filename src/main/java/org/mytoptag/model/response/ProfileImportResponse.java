@@ -22,32 +22,19 @@
  *
  */
 
-package org.mytoptag.repository;
+package org.mytoptag.model.response;
 
-import org.mytoptag.model.InstagramPost;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.util.List;
 
-public interface InstagramPostRepository extends JpaRepository<InstagramPost, String> {
+@Data
+@AllArgsConstructor
+public class ProfileImportResponse {
 
-  InstagramPost findByIgId(Long igId);
+  List<String> imported;
 
-  List<InstagramPost> findByShortCodeIn(List<String> shortCodes);
-
-  default Integer countPostsWithTags(List<Integer> tags){
-    return countByTagsIn(tags, tags.size());
-  }
-
-  @Query(value = "select count(1) from "
-      + "(select post_id "
-      + "from taginpost "
-      + "where tag_id in(:tags) "
-      + "group by post_id "
-      + "having count(tag_id) = :size) p",
-      nativeQuery = true)
-  Integer countByTagsIn(@Param("tags") List<Integer> tags, @Param("size") Integer size);
+  List<String> failed;
 
 }
