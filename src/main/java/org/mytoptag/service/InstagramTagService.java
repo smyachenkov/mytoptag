@@ -33,9 +33,11 @@ import org.mytoptag.model.dto.InstagramSearch;
 import org.mytoptag.repository.InstagramTagCountRepository;
 import org.mytoptag.repository.InstagramTagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -144,6 +146,8 @@ public class InstagramTagService {
   /**
    * Updates history for all tags in repository.
    */
+  @Async("processExecutor")
+  @Transactional
   public void updateAllTagHistory() {
     log.info("updating all tags info in repo");
     instagramTagRepository.findAll().forEach(this::updateTagHistory);
