@@ -24,15 +24,8 @@
 
 package org.mytoptag.repository;
 
-import org.mytoptag.model.InstagramPost;
+import org.mytoptag.model.PostsOfTag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-public interface InstagramPostRepository extends JpaRepository<InstagramPost, String> {
-
-  InstagramPost findByIgId(Long igId);
-
-  List<InstagramPost> findByShortCodeIn(List<String> shortCodes);
-
+public interface PostsOfTagRepository extends JpaRepository<PostsOfTag, Integer> {
 }

@@ -22,17 +22,30 @@
  *
  */
 
-package org.mytoptag.repository;
+package org.mytoptag.model;
 
-import org.mytoptag.model.InstagramPost;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
-public interface InstagramPostRepository extends JpaRepository<InstagramPost, String> {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-  InstagramPost findByIgId(Long igId);
+@Data
+@NoArgsConstructor
+@Entity
+@Table(name = "postsoftag")
+public class PostsOfTag {
 
-  List<InstagramPost> findByShortCodeIn(List<String> shortCodes);
+  @Id
+  @Column(name = "tag")
+  private Integer tag;
+
+  @Type(type = "org.mytoptag.model.type.ArrayType")
+  @Column(name = "posts")
+  private Integer[] posts;
 
 }

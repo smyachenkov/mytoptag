@@ -28,9 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.mytoptag.model.Compatibility;
 import org.mytoptag.model.CompatibilityKey;
 import org.mytoptag.model.InstagramTag;
+import org.mytoptag.model.PostsOfTag;
 import org.mytoptag.repository.CompatibilityRepository;
-import org.mytoptag.repository.InstagramPostRepository;
 import org.mytoptag.repository.InstagramTagRepository;
+import org.mytoptag.repository.PostsOfTagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -39,10 +40,11 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -50,7 +52,7 @@ public class SuggestionService {
 
   private InstagramTagRepository tagRepository;
 
-  private InstagramPostRepository postRepository;
+  private PostsOfTagRepository postsOfTagRepository;
 
   private CompatibilityRepository compatibilityRepository;
 
@@ -62,18 +64,18 @@ public class SuggestionService {
   /**
    * Ctor.
    * @param tagRepository instagram tag repo.
-   * @param postRepository instagram post repo.
    * @param compatibilityRepository compatibility matrix repo.
+   * @param postsOfTagRepository posts of tag repo.
    */
   @Autowired
   public SuggestionService(
       InstagramTagRepository tagRepository,
-      InstagramPostRepository postRepository,
-      CompatibilityRepository compatibilityRepository
+      CompatibilityRepository compatibilityRepository,
+      PostsOfTagRepository postsOfTagRepository
   ) {
     this.tagRepository = tagRepository;
-    this.postRepository = postRepository;
     this.compatibilityRepository = compatibilityRepository;
+    this.postsOfTagRepository = postsOfTagRepository;
   }
 
   /**
@@ -82,29 +84,36 @@ public class SuggestionService {
   @Async("processExecutor")
   public void updateCompatibilityMatrix() {
     compatibilityRepository.clearCompatibilityMatrix();
-    final Integer[] tags = tagRepository.findAll().stream()
-        .map(InstagramTag::getId)
-        .toArray(Integer[]::new);
+    Map<Integer, List<Integer>> tagsMap = postsOfTagRepository.findAll()
+        .stream()
+        .collect(Collectors.toMap(PostsOfTag::getTag, v -> Arrays.asList(v.getPosts())
+    ));
+    final Integer[] tags = tagsMap.keySet().toArray(new Integer[0]);
     final int matrixSize = tags.length;
     for (int i = 0; i < matrixSize; i++) {
-      Integer tag = tags[i];
-      Integer allPostsOccurrence = postRepository.countPostsWithTags(Collections.singletonList(tag));
+      log.info("Calculating compatibility for tag {}", tags[i]);
+      Integer allPostsOccurrence = tagsMap.get(tags[i]).size();
       List<Compatibility> compatibilities = new ArrayList<>();
       for (int j = matrixSize - 1; j > i; j--) {
-        Integer compatiblePosts = postRepository.countPostsWithTags(Arrays.asList(tag, tags[j]));
-        BigDecimal compatibilityValue = BigDecimal.valueOf(compatiblePosts)
-            .divide(BigDecimal.valueOf(allPostsOccurrence), SCALE, BigDecimal.ROUND_HALF_UP);
-        compatibilities.add(
-            new Compatibility(
-                new CompatibilityKey(tag, tags[j]),
-                compatibilityValue.doubleValue()
-            )
-        );
-        log.info("tag: #{}, all posts: {}, compatible posts {}",
-            tag,
-            allPostsOccurrence,
-            compatiblePosts);
+        long compatiblePosts = tagsMap.get(tags[i])
+            .stream()
+            .filter(tagsMap.get(tags[j])::contains)
+            .count();
+        if (compatiblePosts > 0) {
+          BigDecimal compatibilityValue = new BigDecimal(compatiblePosts).divide(
+              BigDecimal.valueOf(allPostsOccurrence),
+              SCALE,
+              BigDecimal.ROUND_HALF_UP
+          );
+          compatibilities.add(
+              new Compatibility(
+                  new CompatibilityKey(tags[i], tags[j]),
+                  compatibilityValue.doubleValue()
+              )
+          );
+        }
       }
+      log.info("Saving {} compatibility entries for tag {}", compatibilities.size(), tags[i]);
       saveInBatches(compatibilities);
     }
   }
