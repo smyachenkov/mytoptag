@@ -24,115 +24,19 @@
 
 package org.mytoptag.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.mytoptag.model.Compatibility;
-import org.mytoptag.model.CompatibilityKey;
 import org.mytoptag.model.InstagramTag;
-import org.mytoptag.model.PostsOfTag;
-import org.mytoptag.repository.CompatibilityRepository;
-import org.mytoptag.repository.InstagramTagRepository;
-import org.mytoptag.repository.PostsOfTagRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-@Service
-@Slf4j
-public class SuggestionService {
 
-  private InstagramTagRepository tagRepository;
-
-  private PostsOfTagRepository postsOfTagRepository;
-
-  private CompatibilityRepository compatibilityRepository;
-
-  @Value("${spring.jpa.properties.hibernate.jdbc.batch_size}")
-  private Integer maxBatchSize;
-
-  private static final Integer SCALE = 5;
-
-  /**
-   * Ctor.
-   * @param tagRepository instagram tag repo.
-   * @param compatibilityRepository compatibility matrix repo.
-   * @param postsOfTagRepository posts of tag repo.
-   */
-  @Autowired
-  public SuggestionService(
-      InstagramTagRepository tagRepository,
-      CompatibilityRepository compatibilityRepository,
-      PostsOfTagRepository postsOfTagRepository
-  ) {
-    this.tagRepository = tagRepository;
-    this.compatibilityRepository = compatibilityRepository;
-    this.postsOfTagRepository = postsOfTagRepository;
-  }
+public interface SuggestionService {
 
   /**
    * Update tag compatibility matrix.
    */
-  @Async("processExecutor")
-  public void updateCompatibilityMatrix() {
-    compatibilityRepository.clearCompatibilityMatrix();
-    Map<Integer, List<Integer>> tagsMap = postsOfTagRepository.findAll()
-        .stream()
-        .collect(Collectors.toMap(PostsOfTag::getTag, v -> Arrays.asList(v.getPosts())
-    ));
-    final Integer[] tags = tagsMap.keySet().toArray(new Integer[0]);
-    final int matrixSize = tags.length;
-    for (int i = 0; i < matrixSize; i++) {
-      log.info("Calculating compatibility for tag {}", tags[i]);
-      Integer allPostsOccurrence = tagsMap.get(tags[i]).size();
-      List<Compatibility> compatibilities = new ArrayList<>();
-      for (int j = matrixSize - 1; j > i; j--) {
-        long compatiblePosts = tagsMap.get(tags[i])
-            .stream()
-            .filter(tagsMap.get(tags[j])::contains)
-            .count();
-        if (compatiblePosts > 0) {
-          BigDecimal compatibilityValue = new BigDecimal(compatiblePosts).divide(
-              BigDecimal.valueOf(allPostsOccurrence),
-              SCALE,
-              BigDecimal.ROUND_HALF_UP
-          );
-          compatibilities.add(
-              new Compatibility(
-                  new CompatibilityKey(tags[i], tags[j]),
-                  compatibilityValue.doubleValue()
-              )
-          );
-        }
-      }
-      log.info("Saving {} compatibility entries for tag {}", compatibilities.size(), tags[i]);
-      saveInBatches(compatibilities);
-    }
-  }
-
-  private void saveInBatches(final List<Compatibility> compatibilities) {
-    List<Compatibility> batch = new ArrayList<>();
-    for (int i = 0; i < compatibilities.size(); i++) {
-      batch.add(compatibilities.get(i));
-      if (batch.size() == maxBatchSize || i == compatibilities.size() - 1) {
-        compatibilityRepository.saveAll(batch);
-        batch.clear();
-      }
-    }
-  }
+  void updateCompatibilityMatrix();
 
   // todo implement
-  public Set<InstagramTag> getRecommendations(final Set<String> tagNames) {
-    List<InstagramTag> originalTags = tagRepository.findByTitleIn(tagNames);
-    return new HashSet<>(originalTags);
-  }
+  Set<InstagramTag> getRecommendations(final Set<String> tagNames);
 
 }
