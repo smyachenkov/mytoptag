@@ -57,7 +57,7 @@ public class SuggestionController {
    * @return tag matrix
    */
   @RequestMapping(
-      value = "/updateMatrix",
+      value = "/update",
       produces = {"application/json"},
       method = RequestMethod.GET
   )

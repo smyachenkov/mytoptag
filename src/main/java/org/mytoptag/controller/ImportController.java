@@ -24,60 +24,60 @@
 
 package org.mytoptag.controller;
 
-import org.mytoptag.model.dto.ListResponseEntity;
-import org.mytoptag.service.InstagramProfileService;
+import lombok.extern.slf4j.Slf4j;
+import org.mytoptag.model.response.ImportProfileResponse;
+import org.mytoptag.service.ProfileImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @CrossOrigin
 @RequestMapping(
-    value = "/post",
+    value = "/import",
     produces = {"application/json"}
-)
-public class PostController {
+    )
+@Slf4j
+public class ImportController {
 
-  private InstagramProfileService profileService;
+  private ProfileImportService profileImportService;
 
   @Autowired
-  public PostController(InstagramProfileService profileService) {
-    this.profileService = profileService;
+  public ImportController(ProfileImportService profileImportService) {
+    this.profileImportService = profileImportService;
   }
 
   /**
-   * Retrieve posts from repo.
+   * Add new set of profiles to import queue.
    *
-   * @param shortCodes codes of a post
-   * @return list of retrieved posts
+   * @param profiles set of account usernames
+   * @return ImportProfileResponse
    */
   @RequestMapping(
-      value = "/{shortCodes}",
-      produces = {"application/json"},
-      method = RequestMethod.GET
+      value = "/",
+      method = RequestMethod.POST
   )
-  public ListResponseEntity findPost(@PathVariable("shortCodes") List<String> shortCodes) {
-    return new ListResponseEntity(profileService.findPosts(shortCodes));
+  public ImportProfileResponse addToQueue(@RequestParam("profiles") Set<String> profiles) {
+    return profileImportService.add(profiles);
   }
 
+
   /**
-   * Import new posts from instagram to db.
-   * @param shortCodes codes of a post
-   * @return list of created posts
+   * Get current queue status.
+   *
+   * @return ImportProfileResponse
    */
   @RequestMapping(
-      value = "/import/{shortCodes}",
-      produces = {"application/json"},
+      value = "/",
       method = RequestMethod.GET
   )
-  public ListResponseEntity importPosts(@PathVariable("shortCodes") List<String> shortCodes) {
-    // todo implement
-    return new ListResponseEntity(shortCodes);
+  public ImportProfileResponse getQueueStatus() {
+    return profileImportService.getCurrentQueue();
   }
 
 }

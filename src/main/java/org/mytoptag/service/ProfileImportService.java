@@ -24,22 +24,25 @@
 
 package org.mytoptag.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import org.mytoptag.model.response.ImportProfileResponse;
 
-@Service
-public class ScheduledTaskService {
+import java.util.Set;
 
-  private InstagramTagService instagramTagService;
 
-  @Autowired
-  public ScheduledTaskService(InstagramTagService instagramTagService) {
-    this.instagramTagService = instagramTagService;
-  }
+public interface ProfileImportService {
 
-  @Scheduled(cron = "0 0 3 * * *")
-  public void updateAllTagHistory() {
-    instagramTagService.updateAllTagHistory();
-  }
+  /**
+   * Get current import queue.
+   *
+   * @return ImportProfileResponse
+   */
+  ImportProfileResponse getCurrentQueue();
+
+  /**
+   * Add new profiles to import queue.
+   *
+   * @param profiles set of profile names
+   */
+  ImportProfileResponse add(Set<String> profiles);
+
 }
