@@ -36,7 +36,6 @@ public interface SuggestionService {
    */
   void updateCompatibilityMatrix();
 
-  // todo implement
   Set<InstagramTag> getRecommendations(final Set<String> tagNames);
 
 }
