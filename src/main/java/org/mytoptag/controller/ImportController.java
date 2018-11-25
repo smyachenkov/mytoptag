@@ -26,14 +26,17 @@ package org.mytoptag.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.mytoptag.model.response.ImportProfileResponse;
+import org.mytoptag.service.InstagramProfileService;
 import org.mytoptag.service.ProfileImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.Set;
 
 @RestController
@@ -47,9 +50,13 @@ public class ImportController {
 
   private ProfileImportService profileImportService;
 
+  private InstagramProfileService profileService;
+
   @Autowired
-  public ImportController(ProfileImportService profileImportService) {
+  public ImportController(ProfileImportService profileImportService,
+                          InstagramProfileService profileService) {
     this.profileImportService = profileImportService;
+    this.profileService = profileService;
   }
 
   /**
@@ -78,6 +85,20 @@ public class ImportController {
   )
   public ImportProfileResponse getQueueStatus() {
     return profileImportService.getCurrentQueue();
+  }
+
+
+  /**
+   * Test
+   *
+   * @return ImportProfileResponse
+   */
+  @RequestMapping(
+      value = "/profile/{profile}",
+      method = RequestMethod.GET
+  )
+  public void test(@PathVariable("profile") String profile) throws IOException {
+    profileService.importLastPosts(profile);
   }
 
 }
