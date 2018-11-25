@@ -36,6 +36,13 @@ public interface SuggestionService {
    */
   void updateCompatibilityMatrix();
 
+
+  /**
+   * Get recommended tags based on users input.
+   *
+   * @param tagNames set of users tags
+   * @return Set of relevant tags
+   */
   Set<InstagramTag> getRecommendations(final Set<String> tagNames);
 
 }
