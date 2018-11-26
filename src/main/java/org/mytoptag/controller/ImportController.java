@@ -25,19 +25,19 @@
 package org.mytoptag.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.mytoptag.model.response.ImportProfileResponse;
+import org.mytoptag.model.dto.request.ProfileListRequest;
+import org.mytoptag.model.dto.response.ImportProfileResponse;
 import org.mytoptag.service.InstagramProfileService;
 import org.mytoptag.service.ProfileImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Set;
 
 @RestController
 @CrossOrigin
@@ -62,15 +62,16 @@ public class ImportController {
   /**
    * Add new set of profiles to import queue.
    *
-   * @param profiles set of account usernames
+   * @param profileList {@link ProfileListRequest}
    * @return ImportProfileResponse
    */
   @RequestMapping(
       value = "/",
-      method = RequestMethod.POST
+      method = RequestMethod.POST,
+      consumes = {"application/json"}
   )
-  public ImportProfileResponse addToQueue(@RequestParam("profiles") Set<String> profiles) {
-    return profileImportService.add(profiles);
+  public ImportProfileResponse addToQueue(@RequestBody ProfileListRequest profileList) {
+    return profileImportService.add(profileList.getProfiles());
   }
 
 
@@ -90,7 +91,7 @@ public class ImportController {
 
   /**
    * Test
-   *
+   * todo remove
    * @return ImportProfileResponse
    */
   @RequestMapping(

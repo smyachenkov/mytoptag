@@ -25,7 +25,7 @@
 package org.mytoptag.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.mytoptag.model.response.ImportProfileResponse;
+import org.mytoptag.model.dto.response.ImportProfileResponse;
 import org.mytoptag.service.InstagramProfileService;
 import org.mytoptag.service.ProfileImportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -74,7 +75,7 @@ public class ProfileImportServiceImpl implements ProfileImportService {
 
   @Override
   public ImportProfileResponse add(Set<String> profiles) {
-    this.importQueue.addAll(profiles);
+    Optional.ofNullable(profiles).ifPresent(this.importQueue::addAll);
     return new ImportProfileResponse(
         this.importQueue.size(),
         new ArrayList<>(this.importQueue),
@@ -86,24 +87,24 @@ public class ProfileImportServiceImpl implements ProfileImportService {
   /**
    * Process import for profile import queue.
    */
-  @Scheduled(cron = "0 0/10 * * * *")
+  @Scheduled(cron = "0 0/1 * * * *")
   public void processImport() {
     log.info("Processing profile import, current queue size: {}", this.importQueue.size());
-    List<String> processed = this.importQueue.stream()
+    final List<String> chunk = this.importQueue.stream()
         .limit(CHUNK_SIZE)
-        .map(
-            profile -> {
-              try {
-                profileService.importLastPosts(profile);
-                this.imported.add(profile);
-              } catch (Exception ex) {
-                log.info("Error processing import for profile {}", profile);
-                this.failed.add(profile);
-              }
-              return profile;
-            }
-        ).collect(Collectors.toList());
-    this.importQueue.removeAll(processed);
+        .collect(Collectors.toList());
+    chunk.forEach(
+        profile -> {
+          try {
+            profileService.importLastPosts(profile);
+            this.imported.add(profile);
+          } catch (Exception ex) {
+            log.info("Error processing import for profile {}", profile, ex);
+            this.failed.add(profile);
+          }
+        }
+    );
+    this.importQueue.removeAll(chunk);
   }
 
 }

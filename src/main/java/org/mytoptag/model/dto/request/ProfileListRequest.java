@@ -22,25 +22,15 @@
  *
  */
 
-package org.mytoptag.model.response;
+package org.mytoptag.model.dto.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ImportProfileResponse {
+public class ProfileListRequest {
 
-  private Integer queueSize;
-
-  private List<String> queue;
-
-  private List<String> imported;
-
-  private List<String> failed;
+  private Set<String> profiles;
 
 }
