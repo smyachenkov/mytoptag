@@ -82,10 +82,10 @@ public class InstagramProfileDeserializer extends StdDeserializer<InstagramProfi
           .get("edges");
       final String text;
       if (edgesArray.isArray() && edgesArray.size() > 0) {
-         text = edgesArray.get(0)
-            .get("node")
-            .get("text")
-            .asText();
+        text = edgesArray.get(0)
+          .get("node")
+          .get("text")
+          .asText();
       } else {
         text = "";
       }
