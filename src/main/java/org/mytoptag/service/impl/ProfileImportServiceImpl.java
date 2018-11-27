@@ -87,7 +87,7 @@ public class ProfileImportServiceImpl implements ProfileImportService {
   /**
    * Process import for profile import queue.
    */
-  @Scheduled(cron = "0 0/1 * * * *")
+  @Scheduled(cron = "0 0/10 * * * *")
   public void processImport() {
     log.info("Processing profile import, current queue size: {}", this.importQueue.size());
     final List<String> chunk = this.importQueue.stream()
