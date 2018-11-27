@@ -88,18 +88,4 @@ public class ImportController {
     return profileImportService.getCurrentQueue();
   }
 
-
-  /**
-   * Test
-   * todo remove
-   * @return ImportProfileResponse
-   */
-  @RequestMapping(
-      value = "/profile/{profile}",
-      method = RequestMethod.GET
-  )
-  public void test(@PathVariable("profile") String profile) throws IOException {
-    profileService.importLastPosts(profile);
-  }
-
 }
