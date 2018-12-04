@@ -25,10 +25,13 @@
 package org.mytoptag.repository;
 
 import org.mytoptag.model.Compatibility;
+import org.mytoptag.model.dto.query.TagSuggestionQueryResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import javax.transaction.Transactional;
 
 public interface CompatibilityRepository extends JpaRepository<Compatibility, Integer> {
@@ -37,5 +40,23 @@ public interface CompatibilityRepository extends JpaRepository<Compatibility, In
   @Transactional
   @Query(value = "truncate table COMPATIBILITY", nativeQuery = true)
   void clearCompatibilityMatrix();
+
+  @Query(value =
+          "select\n"
+          + "  t.title,\n"
+          + "  c.compatibility,\n"
+          + "  max(tc.count) count\n"
+          + "from compatibility c\n"
+          + "join tag t\n"
+          + "  on t.id = c.tag_b\n"
+          + "join tagcount tc\n"
+          + "  on tc.tag_id = c.tag_b\n"
+          + "where\n"
+          + "  c.tag_a in :ids\n"
+          + "group by t.title, c.compatibility\n"
+          + "order by c.compatibility desc\n"
+          + "limit 30",
+      nativeQuery = true)
+  List<TagSuggestionQueryResult> getCompatiblePosts(@Param("ids") List<Integer> tagIds);
 
 }

@@ -27,17 +27,13 @@ package org.mytoptag.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.mytoptag.model.dto.request.ProfileListRequest;
 import org.mytoptag.model.dto.response.ImportProfileResponse;
-import org.mytoptag.service.InstagramProfileService;
 import org.mytoptag.service.ProfileImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
 
 @RestController
 @CrossOrigin
@@ -50,13 +46,9 @@ public class ImportController {
 
   private ProfileImportService profileImportService;
 
-  private InstagramProfileService profileService;
-
   @Autowired
-  public ImportController(ProfileImportService profileImportService,
-                          InstagramProfileService profileService) {
+  public ImportController(ProfileImportService profileImportService) {
     this.profileImportService = profileImportService;
-    this.profileService = profileService;
   }
 
   /**

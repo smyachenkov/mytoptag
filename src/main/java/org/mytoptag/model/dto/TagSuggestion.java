@@ -22,28 +22,34 @@
  *
  */
 
-package org.mytoptag.service;
+package org.mytoptag.model.dto;
 
-import org.mytoptag.model.dto.TagSuggestion;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.mytoptag.model.dto.query.TagSuggestionQueryResult;
 
-import java.util.List;
-import java.util.Set;
+import java.math.BigDecimal;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class TagSuggestion {
 
-public interface SuggestionService {
+  private String tag;
+
+  private BigDecimal compatibility;
+
+  private Integer count;
 
   /**
-   * Update tag compatibility matrix.
-   */
-  void updateCompatibilityMatrix();
-
-
-  /**
-   * Get recommended tags based on users input.
+   * Ctor.
    *
-   * @param tagNames set of users tags
-   * @return List of relevant tags
+   * @param tagSuggestionQueryResult {@link TagSuggestionQueryResult}
    */
-  List<TagSuggestion> getRecommendations(final Set<String> tagNames);
-
+  public TagSuggestion(TagSuggestionQueryResult tagSuggestionQueryResult) {
+    this.tag = tagSuggestionQueryResult.getTitle();
+    this.compatibility = tagSuggestionQueryResult.getCompatibility();
+    this.count = tagSuggestionQueryResult.getCount();
+  }
 }

@@ -29,6 +29,8 @@ import org.mytoptag.model.Compatibility;
 import org.mytoptag.model.CompatibilityKey;
 import org.mytoptag.model.InstagramTag;
 import org.mytoptag.model.PostsOfTag;
+import org.mytoptag.model.dto.TagSuggestion;
+import org.mytoptag.model.dto.query.TagSuggestionQueryResult;
 import org.mytoptag.repository.CompatibilityRepository;
 import org.mytoptag.repository.InstagramTagRepository;
 import org.mytoptag.repository.PostsOfTagRepository;
@@ -41,7 +43,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,9 +65,10 @@ public class SuggestionServiceImpl implements SuggestionService {
 
   /**
    * Ctor.
-   * @param tagRepository instagram tag repo.
+   *
+   * @param tagRepository           instagram tag repo.
    * @param compatibilityRepository compatibility matrix repo.
-   * @param postsOfTagRepository posts of tag repo.
+   * @param postsOfTagRepository    posts of tag repo.
    */
   @Autowired
   public SuggestionServiceImpl(
@@ -87,8 +89,7 @@ public class SuggestionServiceImpl implements SuggestionService {
     compatibilityRepository.clearCompatibilityMatrix();
     Map<Integer, List<Integer>> tagsMap = postsOfTagRepository.findAll()
         .stream()
-        .collect(Collectors.toMap(PostsOfTag::getTag, v -> Arrays.asList(v.getPosts())
-    ));
+        .collect(Collectors.toMap(PostsOfTag::getTag, v -> Arrays.asList(v.getPosts())));
     final Integer[] tags = tagsMap.keySet().toArray(new Integer[0]);
     final int matrixSize = tags.length;
     for (int i = 0; i < matrixSize; i++) {
@@ -130,10 +131,19 @@ public class SuggestionServiceImpl implements SuggestionService {
     }
   }
 
-  // todo implement
-  public Set<InstagramTag> getRecommendations(final Set<String> tagNames) {
-    List<InstagramTag> originalTags = tagRepository.findByTitleIn(tagNames);
-    return new HashSet<>(originalTags);
+  /**
+   * Retrieves most relevant tags according to compatibility matrix.
+   *
+   * @param tags set of users tags
+   * @return List of {@link TagSuggestion}
+   */
+  public List<TagSuggestion> getRecommendations(final Set<String> tags) {
+    final List<InstagramTag> originalTags = tagRepository.findByTitleIn(tags);
+    final List<TagSuggestionQueryResult> compatibilities =
+        compatibilityRepository.getCompatiblePosts(
+            originalTags.stream().map(InstagramTag::getId).collect(Collectors.toList())
+        );
+    return compatibilities.stream().map(TagSuggestion::new).collect(Collectors.toList());
   }
 
 }
