@@ -24,14 +24,17 @@
 
 package org.mytoptag.controller;
 
+import org.mytoptag.model.dto.TagSuggestion;
 import org.mytoptag.service.SuggestionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashSet;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -49,17 +52,28 @@ public class SuggestionController {
   }
 
   /**
-   * Get all tags compatibility matrix.
-   * @return tag matrix
+   * Update tags compatibility matrix.
    */
   @RequestMapping(
-      value = "/updateMatrix",
+      value = "/update",
       produces = {"application/json"},
       method = RequestMethod.GET
   )
-  public ResponseEntity<?> updateTagMatrix() {
+  public void updateTagMatrix() {
     suggestionService.updateCompatibilityMatrix();
-    return new ResponseEntity<>("Tag compatibility matrix update started", HttpStatus.OK);
+  }
+
+  /**
+   * Get most relevant tags for current user's.
+   * @return list of {@link TagSuggestion}
+   */
+  @RequestMapping(
+      value = "/tags/{tags}",
+      produces = {"application/json"},
+      method = RequestMethod.GET
+  )
+  public List<TagSuggestion> getRecommendations(@PathVariable("tags") List<String> tags) {
+    return suggestionService.getRecommendations(new HashSet<>(tags));
   }
 
 }

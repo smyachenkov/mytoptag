@@ -22,28 +22,15 @@
  *
  */
 
-package org.mytoptag.service;
+package org.mytoptag.model.dto.request;
 
-import org.mytoptag.model.dto.TagSuggestion;
+import lombok.Data;
 
-import java.util.List;
 import java.util.Set;
 
+@Data
+public class ProfileListRequest {
 
-public interface SuggestionService {
-
-  /**
-   * Update tag compatibility matrix.
-   */
-  void updateCompatibilityMatrix();
-
-
-  /**
-   * Get recommended tags based on users input.
-   *
-   * @param tagNames set of users tags
-   * @return List of relevant tags
-   */
-  List<TagSuggestion> getRecommendations(final Set<String> tagNames);
+  private Set<String> profiles;
 
 }

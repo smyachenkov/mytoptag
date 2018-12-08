@@ -77,15 +77,20 @@ public class InstagramProfileDeserializer extends StdDeserializer<InstagramProfi
     for (int i = 0; i < mediaNodes.size(); i++) {
       JsonNode mediaNode = mediaNodes.get(i).get("node");
       Long id = mediaNode.get("id").asLong();
-      String text = mediaNode
+      JsonNode edgesArray = mediaNode
           .get("edge_media_to_caption")
-          .get("edges")
-          .get(0)
+          .get("edges");
+      final String text;
+      if (edgesArray.isArray() && edgesArray.size() > 0) {
+        text = edgesArray.get(0)
           .get("node")
           .get("text")
           .asText();
+      } else {
+        text = "";
+      }
       Integer likedBy = mediaNode
-          .get("edge_media_preview_like")
+            .get("edge_media_preview_like")
           .get("count")
           .asInt();
       String previewLink = mediaNode
@@ -98,6 +103,7 @@ public class InstagramProfileDeserializer extends StdDeserializer<InstagramProfi
           .get("taken_at_timestamp")
           .asLong();
       posts.add(new InstagramPost(id, text, likedBy, previewLink, shortCode, timeStamp));
+
     }
     return posts;
   }

@@ -22,28 +22,46 @@
  *
  */
 
-package org.mytoptag.service;
+package org.mytoptag.model.dto.response;
 
-import org.mytoptag.model.dto.TagSuggestion;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Set;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ImportProfileResponse {
 
-public interface SuggestionService {
+  private Integer queueSize;
+
+  private Integer importedSize;
+
+  private Integer failedSize;
+
+  private List<String> queue;
+
+  private List<String> imported;
+
+  private List<String> failed;
 
   /**
-   * Update tag compatibility matrix.
-   */
-  void updateCompatibilityMatrix();
-
-
-  /**
-   * Get recommended tags based on users input.
+   * Ctor.
    *
-   * @param tagNames set of users tags
-   * @return List of relevant tags
+   * @param queue list of profiles in queue
+   * @param imported list of imported profiles
+   * @param failed list of failed to import profiles
    */
-  List<TagSuggestion> getRecommendations(final Set<String> tagNames);
-
+  public ImportProfileResponse(List<String> queue,
+                               List<String> imported,
+                               List<String> failed) {
+    this.queueSize = queue.size();
+    this.importedSize = imported.size();
+    this.failedSize = failed.size();
+    this.queue = queue;
+    this.imported = imported;
+    this.failed = failed;
+  }
 }

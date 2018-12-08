@@ -24,72 +24,60 @@
 
 package org.mytoptag.controller;
 
-import org.mytoptag.model.InstagramPost;
-import org.mytoptag.model.dto.ListResponseEntity;
-import org.mytoptag.service.InstagramProfileService;
+import lombok.extern.slf4j.Slf4j;
+import org.mytoptag.model.dto.request.ProfileListRequest;
+import org.mytoptag.model.dto.response.ImportProfileResponse;
+import org.mytoptag.service.ProfileImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.util.List;
-
 @RestController
 @CrossOrigin
 @RequestMapping(
-    value = "/profile",
-    produces = {"application/json"},
-    method = RequestMethod.GET
-)
-public class ProfileController {
+    value = "/import",
+    produces = {"application/json"}
+    )
+@Slf4j
+public class ImportController {
 
-  private InstagramProfileService instagramProfileService;
+  private ProfileImportService profileImportService;
 
   @Autowired
-  public ProfileController(InstagramProfileService instagramProfileService) {
-    this.instagramProfileService = instagramProfileService;
+  public ImportController(ProfileImportService profileImportService) {
+    this.profileImportService = profileImportService;
   }
 
   /**
-   * Import last posts of user.
+   * Add new set of profiles to import queue.
    *
-   * @param name Instagram account username
-   * @return List of last 12 posts
+   * @param profileList {@link ProfileListRequest}
+   * @return ImportProfileResponse
    */
   @RequestMapping(
-      value = "/import/{name}",
-      produces = {"application/json"},
-      method = RequestMethod.GET
+      value = "/",
+      method = RequestMethod.POST,
+      consumes = {"application/json"}
   )
-  public ListResponseEntity importLastPosts(@PathVariable("name") String name) {
-    try {
-      return new ListResponseEntity(instagramProfileService.importLastPosts(name));
-    } catch (IOException ex) {
-      throw new ObjectNotFoundException();
-    }
+  public ImportProfileResponse addToQueue(@RequestBody ProfileListRequest profileList) {
+    return profileImportService.add(profileList.getProfiles());
   }
 
+
   /**
-   * Get last posts of user.
+   * Get current queue status.
    *
-   * @param name Instagram account username
-   * @return List of last 12 posts
+   * @return ImportProfileResponse
    */
   @RequestMapping(
-      value = "/view/{name}",
-      produces = {"application/json"},
+      value = "/",
       method = RequestMethod.GET
   )
-  public ListResponseEntity getLastPosts(@PathVariable("name") String name) {
-    try {
-      List<InstagramPost> posts = instagramProfileService.getLastPosts(name);
-      return new ListResponseEntity(posts);
-    } catch (IOException ex) {
-      throw new ObjectNotFoundException();
-    }
+  public ImportProfileResponse getQueueStatus() {
+    return profileImportService.getCurrentQueue();
   }
 
 }

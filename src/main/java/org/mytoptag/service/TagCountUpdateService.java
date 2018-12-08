@@ -24,26 +24,11 @@
 
 package org.mytoptag.service;
 
-import org.mytoptag.model.dto.TagSuggestion;
-
-import java.util.List;
-import java.util.Set;
-
-
-public interface SuggestionService {
+public interface TagCountUpdateService {
 
   /**
-   * Update tag compatibility matrix.
+   * Updates tag count values.
    */
-  void updateCompatibilityMatrix();
-
-
-  /**
-   * Get recommended tags based on users input.
-   *
-   * @param tagNames set of users tags
-   * @return List of relevant tags
-   */
-  List<TagSuggestion> getRecommendations(final Set<String> tagNames);
+  void updateTagCount();
 
 }

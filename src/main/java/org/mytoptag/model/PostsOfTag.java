@@ -22,28 +22,30 @@
  *
  */
 
-package org.mytoptag.service;
-
-import org.mytoptag.model.dto.TagSuggestion;
-
-import java.util.List;
-import java.util.Set;
+package org.mytoptag.model;
 
 
-public interface SuggestionService {
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
-  /**
-   * Update tag compatibility matrix.
-   */
-  void updateCompatibilityMatrix();
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Data
+@NoArgsConstructor
+@Entity
+@Table(name = "postsoftag")
+public class PostsOfTag {
 
-  /**
-   * Get recommended tags based on users input.
-   *
-   * @param tagNames set of users tags
-   * @return List of relevant tags
-   */
-  List<TagSuggestion> getRecommendations(final Set<String> tagNames);
+  @Id
+  @Column(name = "tag")
+  private Integer tag;
+
+  @Type(type = "org.mytoptag.model.type.ArrayType")
+  @Column(name = "posts")
+  private Integer[] posts;
 
 }

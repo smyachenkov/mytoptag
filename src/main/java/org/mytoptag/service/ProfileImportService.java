@@ -24,26 +24,34 @@
 
 package org.mytoptag.service;
 
-import org.mytoptag.model.dto.TagSuggestion;
+import org.mytoptag.model.dto.response.ImportProfileResponse;
 
-import java.util.List;
 import java.util.Set;
 
 
-public interface SuggestionService {
+public interface ProfileImportService {
 
   /**
-   * Update tag compatibility matrix.
-   */
-  void updateCompatibilityMatrix();
-
-
-  /**
-   * Get recommended tags based on users input.
+   * Get current import queue.
    *
-   * @param tagNames set of users tags
-   * @return List of relevant tags
+   * @return ImportProfileResponse
    */
-  List<TagSuggestion> getRecommendations(final Set<String> tagNames);
+  ImportProfileResponse getCurrentQueue();
+
+  /**
+   * Add new profiles to import queue.
+   *
+   * @param profiles set of profile names
+   * @return ImportProfileResponse
+   */
+  ImportProfileResponse add(Set<String> profiles);
+
+
+  /**
+   * Removes processed profiles from import queue.
+   *
+   * @return ImportProfileResponse
+   */
+  ImportProfileResponse removeProcessed();
 
 }

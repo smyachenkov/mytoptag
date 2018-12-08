@@ -22,28 +22,10 @@
  *
  */
 
-package org.mytoptag.service;
+package org.mytoptag.repository;
 
-import org.mytoptag.model.dto.TagSuggestion;
+import org.mytoptag.model.PostsOfTag;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-import java.util.Set;
-
-
-public interface SuggestionService {
-
-  /**
-   * Update tag compatibility matrix.
-   */
-  void updateCompatibilityMatrix();
-
-
-  /**
-   * Get recommended tags based on users input.
-   *
-   * @param tagNames set of users tags
-   * @return List of relevant tags
-   */
-  List<TagSuggestion> getRecommendations(final Set<String> tagNames);
-
+public interface PostsOfTagRepository extends JpaRepository<PostsOfTag, Integer> {
 }

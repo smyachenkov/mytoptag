@@ -22,28 +22,16 @@
  *
  */
 
-package org.mytoptag.service;
+package org.mytoptag.model.dto.query;
 
-import org.mytoptag.model.dto.TagSuggestion;
+import java.math.BigDecimal;
 
-import java.util.List;
-import java.util.Set;
+public interface TagSuggestionQueryResult {
 
+  String getTitle();
 
-public interface SuggestionService {
+  BigDecimal getCompatibility();
 
-  /**
-   * Update tag compatibility matrix.
-   */
-  void updateCompatibilityMatrix();
-
-
-  /**
-   * Get recommended tags based on users input.
-   *
-   * @param tagNames set of users tags
-   * @return List of relevant tags
-   */
-  List<TagSuggestion> getRecommendations(final Set<String> tagNames);
+  Integer getCount();
 
 }

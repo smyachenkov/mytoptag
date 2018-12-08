@@ -22,24 +22,34 @@
  *
  */
 
-package org.mytoptag.service;
+package org.mytoptag.model.dto;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.mytoptag.model.dto.query.TagSuggestionQueryResult;
 
-@Service
-public class ScheduledTaskService {
+import java.math.BigDecimal;
 
-  private InstagramTagService instagramTagService;
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class TagSuggestion {
 
-  @Autowired
-  public ScheduledTaskService(InstagramTagService instagramTagService) {
-    this.instagramTagService = instagramTagService;
-  }
+  private String tag;
 
-  @Scheduled(cron = "0 0 3 * * *")
-  public void updateAllTagHistory() {
-    instagramTagService.updateAllTagHistory();
+  private BigDecimal compatibility;
+
+  private Integer count;
+
+  /**
+   * Ctor.
+   *
+   * @param tagSuggestionQueryResult {@link TagSuggestionQueryResult}
+   */
+  public TagSuggestion(TagSuggestionQueryResult tagSuggestionQueryResult) {
+    this.tag = tagSuggestionQueryResult.getTitle();
+    this.compatibility = tagSuggestionQueryResult.getCompatibility();
+    this.count = tagSuggestionQueryResult.getCount();
   }
 }
