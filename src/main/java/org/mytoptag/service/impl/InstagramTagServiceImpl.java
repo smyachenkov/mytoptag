@@ -191,7 +191,7 @@ public class InstagramTagServiceImpl implements InstagramTagService {
           .orElse(null);
       if (count == null || search.getHashtags().isEmpty()) {
         log.error("there are no tags in #{} search", tag.getTitle());
-        return null;
+        count = new InstagramTagCount(tag, 0L);
       }
       log.info("new #{} count is {}", tag.getTitle(), count.getCount());
       return instagramTagCountRepository.save(count);
