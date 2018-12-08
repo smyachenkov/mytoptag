@@ -189,6 +189,10 @@ public class InstagramTagServiceImpl implements InstagramTagService {
           .findFirst()
           .map(s -> new InstagramTagCount(tag, s.getCount()))
           .orElse(null);
+      if (count == null || search.getHashtags().isEmpty()) {
+        log.error("there are no tags in #{} search", tag.getTitle());
+        return null;
+      }
       log.info("new #{} count is {}", tag.getTitle(), count.getCount());
       return instagramTagCountRepository.save(count);
     } catch (IOException exception) {
