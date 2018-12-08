@@ -24,34 +24,11 @@
 
 package org.mytoptag.service;
 
-import org.mytoptag.model.dto.response.ImportProfileResponse;
-
-import java.util.Set;
-
-
-public interface ProfileImportService {
+public interface TagCountUpdateService {
 
   /**
-   * Get current import queue.
-   *
-   * @return ImportProfileResponse
+   * Updates tag count values.
    */
-  ImportProfileResponse getCurrentQueue();
-
-  /**
-   * Add new profiles to import queue.
-   *
-   * @param profiles set of profile names
-   * @return ImportProfileResponse
-   */
-  ImportProfileResponse add(Set<String> profiles);
-
-
-  /**
-   * Removes processed profiles from import queue.
-   *
-   * @return ImportProfileResponse
-   */
-  ImportProfileResponse removeProcessed();
+  void updateTagCount();
 
 }

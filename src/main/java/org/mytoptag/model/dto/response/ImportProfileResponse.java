@@ -37,10 +37,31 @@ public class ImportProfileResponse {
 
   private Integer queueSize;
 
+  private Integer importedSize;
+
+  private Integer failedSize;
+
   private List<String> queue;
 
   private List<String> imported;
 
   private List<String> failed;
 
+  /**
+   * Ctor.
+   *
+   * @param queue list of profiles in queue
+   * @param imported list of imported profiles
+   * @param failed list of failed to import profiles
+   */
+  public ImportProfileResponse(List<String> queue,
+                               List<String> imported,
+                               List<String> failed) {
+    this.queueSize = queue.size();
+    this.importedSize = imported.size();
+    this.failedSize = failed.size();
+    this.queue = queue;
+    this.imported = imported;
+    this.failed = failed;
+  }
 }

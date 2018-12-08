@@ -26,18 +26,44 @@ package org.mytoptag.repository;
 
 import org.mytoptag.model.InstagramTag;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Set;
 import javax.transaction.Transactional;
 
-public interface InstagramTagRepository extends JpaRepository<InstagramTag, String> {
+public interface InstagramTagRepository extends JpaRepository<InstagramTag, Integer> {
 
   InstagramTag findByTitle(String title);
 
   List<InstagramTag> findByTitleIn(Set<String> names);
 
   List<InstagramTag> findAll();
+
+  @Query(
+      nativeQuery = true,
+      value = "select t.id from \n"
+            + "  tag t\n"
+            + "left join tagcount tc\n"
+            + "  on tc.tag_id = t.id\n"
+            + "where   \n"
+            + " tc.count_date is null or tc.count_date < now() - interval '10 day'\n"
+            + "order by tc.count_date desc\n"
+            + "limit :size"
+  )
+  List<Integer> findNotUpdated(@Param("size") Integer size);
+
+  @Query(
+      nativeQuery = true,
+      value = "select count(1) from \n"
+            + "  tag t\n"
+            + "left join tagcount tc\n"
+            + "  on tc.tag_id = t.id\n"
+            + "where   \n"
+            + " tc.count_date is null or tc.count_date < now() - interval '10 day'"
+  )
+  Integer countNotUpdated();
 
   @Transactional
   void deleteByTitle(String title);

@@ -37,6 +37,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,6 +49,8 @@ public class ProfileImportServiceImpl implements ProfileImportService {
   private final List<String> imported = new ArrayList<>();
 
   private final List<String> failed = new ArrayList<>();
+
+  private final ReentrantLock lock = new ReentrantLock();
 
   private InstagramProfileService profileService;
 
@@ -66,18 +69,22 @@ public class ProfileImportServiceImpl implements ProfileImportService {
   @Override
   public ImportProfileResponse getCurrentQueue() {
     return new ImportProfileResponse(
-        this.importQueue.size(),
         new ArrayList<>(this.importQueue),
         this.imported,
         this.failed
     );
   }
 
+
   @Override
   public ImportProfileResponse add(Set<String> profiles) {
-    Optional.ofNullable(profiles).ifPresent(this.importQueue::addAll);
+    this.lock.lock();
+    try {
+      Optional.ofNullable(profiles).ifPresent(this.importQueue::addAll);
+    } finally {
+      this.lock.unlock();
+    }
     return new ImportProfileResponse(
-        this.importQueue.size(),
         new ArrayList<>(this.importQueue),
         this.imported,
         this.failed
@@ -89,22 +96,44 @@ public class ProfileImportServiceImpl implements ProfileImportService {
    */
   @Scheduled(cron = "0 0/10 * * * *")
   public void processImport() {
-    log.info("Processing profile import, current queue size: {}", this.importQueue.size());
-    final List<String> chunk = this.importQueue.stream()
-        .limit(CHUNK_SIZE)
-        .collect(Collectors.toList());
-    chunk.forEach(
-        profile -> {
-          try {
-            profileService.importLastPosts(profile);
-            this.imported.add(profile);
-          } catch (Exception ex) {
-            log.info("Error processing import for profile {}", profile, ex);
-            this.failed.add(profile);
+    this.lock.lock();
+    try {
+      log.info("Processing profile import, current queue size: {}", this.importQueue.size());
+      final List<String> chunk = this.importQueue.stream()
+          .limit(CHUNK_SIZE)
+          .collect(Collectors.toList());
+      chunk.forEach(
+          profile -> {
+            try {
+              profileService.importLastPosts(profile);
+              this.imported.add(profile);
+            } catch (Exception ex) {
+              log.info("Error processing import for profile {}", profile, ex);
+              this.failed.add(profile);
+            }
           }
-        }
+      );
+      this.importQueue.removeAll(chunk);
+    } finally {
+      this.lock.unlock();
+    }
+  }
+
+  @Override
+  @Scheduled(cron = "0 0 1 * * SUN")
+  public ImportProfileResponse removeProcessed() {
+    this.lock.lock();
+    try {
+      this.failed.clear();
+      this.imported.clear();
+    } finally {
+      this.lock.unlock();
+    }
+    return new ImportProfileResponse(
+        new ArrayList<>(this.importQueue),
+        this.imported,
+        this.failed
     );
-    this.importQueue.removeAll(chunk);
   }
 
 }

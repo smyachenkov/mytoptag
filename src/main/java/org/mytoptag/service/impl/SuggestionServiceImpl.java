@@ -74,8 +74,7 @@ public class SuggestionServiceImpl implements SuggestionService {
   public SuggestionServiceImpl(
       InstagramTagRepository tagRepository,
       CompatibilityRepository compatibilityRepository,
-      PostsOfTagRepository postsOfTagRepository
-  ) {
+      PostsOfTagRepository postsOfTagRepository) {
     this.tagRepository = tagRepository;
     this.compatibilityRepository = compatibilityRepository;
     this.postsOfTagRepository = postsOfTagRepository;
@@ -118,6 +117,8 @@ public class SuggestionServiceImpl implements SuggestionService {
       log.info("Saving {} compatibility entries for tag {}", compatibilities.size(), tags[i]);
       saveInBatches(compatibilities);
     }
+    log.info("compatibility matrix has been updated successfully, new entries amount: {}",
+        compatibilityRepository.count());
   }
 
   private void saveInBatches(final List<Compatibility> compatibilities) {
