@@ -33,9 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 
 @Service
 @Slf4j
@@ -56,7 +56,7 @@ public class TagCountUpdateServiceImpl implements TagCountUpdateService {
   }
 
   @Override
-  @Scheduled(cron = "0 0/30 * * * *")
+  @Scheduled(cron = "0 0/15 * * * *")
   @Transactional
   public void updateTagCount() {
     log.info("there are {} tags without actual count number", tagRepository.countNotUpdated());

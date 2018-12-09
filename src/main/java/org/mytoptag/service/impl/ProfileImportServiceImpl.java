@@ -54,7 +54,7 @@ public class ProfileImportServiceImpl implements ProfileImportService {
 
   private InstagramProfileService profileService;
 
-  private static final int CHUNK_SIZE = 10;
+  private static final int CHUNK_SIZE = 20;
 
   /**
    * Ctor.
