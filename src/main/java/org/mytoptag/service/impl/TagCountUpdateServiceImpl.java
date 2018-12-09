@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 
 @Service
 @Slf4j
@@ -55,7 +56,8 @@ public class TagCountUpdateServiceImpl implements TagCountUpdateService {
   }
 
   @Override
-  @Scheduled(cron = "0 0/30 * * * *")
+  @Scheduled(cron = "0 0/15 * * * *")
+  @Transactional
   public void updateTagCount() {
     log.info("there are {} tags without actual count number", tagRepository.countNotUpdated());
     final List<Integer> tagIds = tagRepository.findNotUpdated(CHUNK_SIZE);
