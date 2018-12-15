@@ -28,12 +28,21 @@ import lombok.Data;
 
 import java.util.List;
 
+
+/**
+ * List response.
+ */
 @Data
 public class ListResponseEntity {
 
   private List data;
 
-  public ListResponseEntity(List data) {
+  /**
+   * Ctor.
+   *
+   * @param data data list
+   */
+  public ListResponseEntity(final List data) {
     this.data = data;
   }
 }

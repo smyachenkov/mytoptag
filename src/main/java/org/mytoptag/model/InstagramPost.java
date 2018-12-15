@@ -41,6 +41,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 
+/**
+ * Instagram Post model.
+ */
 @Data
 @NoArgsConstructor
 @Entity
@@ -86,13 +89,14 @@ public class InstagramPost {
    * @param likes       Number of likes
    * @param previewLink Link to small preview pic
    * @param shortCode   Code for post url
+   * @param date        Date
    */
-  public InstagramPost(Long igId,
-                       String text,
-                       int likes,
-                       String previewLink,
-                       String shortCode,
-                       Long date) {
+  public InstagramPost(final Long igId,
+                       final String text,
+                       final int likes,
+                       final String previewLink,
+                       final String shortCode,
+                       final Long date) {
     this.igId = igId;
     this.text = text;
     this.likes = likes;

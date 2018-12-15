@@ -24,6 +24,10 @@
 
 package org.mytoptag.service;
 
+
+/**
+ * Tag count update service.
+ */
 public interface TagCountUpdateService {
 
   /**

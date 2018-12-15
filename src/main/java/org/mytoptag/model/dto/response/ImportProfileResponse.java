@@ -30,6 +30,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Import status response dto.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -54,9 +57,9 @@ public class ImportProfileResponse {
    * @param imported list of imported profiles
    * @param failed list of failed to import profiles
    */
-  public ImportProfileResponse(List<String> queue,
-                               List<String> imported,
-                               List<String> failed) {
+  public ImportProfileResponse(final List<String> queue,
+                               final List<String> imported,
+                               final List<String> failed) {
     this.queueSize = queue.size();
     this.importedSize = imported.size();
     this.failedSize = failed.size();

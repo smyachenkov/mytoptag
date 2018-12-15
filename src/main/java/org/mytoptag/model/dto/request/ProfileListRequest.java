@@ -28,6 +28,9 @@ import lombok.Data;
 
 import java.util.Set;
 
+/**
+ * Input data format for batch profile import.
+ */
 @Data
 public class ProfileListRequest {
 

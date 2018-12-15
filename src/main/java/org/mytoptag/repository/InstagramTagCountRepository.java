@@ -27,6 +27,9 @@ package org.mytoptag.repository;
 import org.mytoptag.model.InstagramTagCount;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+/**
+ * {@link InstagramTagCount} repository.
+ */
 public interface InstagramTagCountRepository extends JpaRepository<InstagramTagCount, String> {
 
 }

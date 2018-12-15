@@ -29,6 +29,10 @@ import org.mytoptag.model.InstagramPost;
 import java.io.IOException;
 import java.util.List;
 
+
+/**
+ * Instagram profile service.
+ */
 public interface InstagramProfileService {
 
   /**
@@ -56,6 +60,5 @@ public interface InstagramProfileService {
    * @throws IOException If can't parse json response
    */
   List<InstagramPost> getLastPosts(final String username) throws IOException;
-
 
 }

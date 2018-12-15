@@ -36,6 +36,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+
+/**
+ * Custom data type for postgresql arrays.
+ *
+ * @param <T> Serializable
+ */
 public class ArrayType<T extends Serializable> implements UserType {
 
   private static final int[] SQL_TYPES = {Types.ARRAY};
@@ -43,23 +49,22 @@ public class ArrayType<T extends Serializable> implements UserType {
   private Class<T> typeParameterClass;
 
   @Override
-  public Object assemble(Serializable cached, Object owner) throws HibernateException {
+  public Object assemble(final Serializable cached, final Object owner) throws HibernateException {
     return this.deepCopy(cached);
   }
 
   @Override
-  public Object deepCopy(Object value) throws HibernateException {
+  public Object deepCopy(final Object value) throws HibernateException {
     return value;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public Serializable disassemble(Object value) throws HibernateException {
+  public Serializable disassemble(final Object value) throws HibernateException {
     return (T) this.deepCopy(value);
   }
 
   @Override
-  public boolean equals(Object o1, Object o2) throws HibernateException {
+  public boolean equals(final Object o1, final Object o2) throws HibernateException {
 
     if (o1 == null) {
       return o2 == null;
@@ -68,41 +73,38 @@ public class ArrayType<T extends Serializable> implements UserType {
   }
 
   @Override
-  public int hashCode(Object object) throws HibernateException {
+  public int hashCode(final Object object) throws HibernateException {
     return object.hashCode();
   }
 
   @Override
-  public Object nullSafeGet(ResultSet resultSet,
-                            String[] names,
-                            SharedSessionContractImplementor sharedSessionContractImplementor,
-                            Object object) throws HibernateException, SQLException {
+  public Object nullSafeGet(final ResultSet resultSet,
+                            final String[] names,
+                            final SharedSessionContractImplementor sharedSessionContractImplementor,
+                            final Object object) throws HibernateException, SQLException {
     if (resultSet.wasNull()) {
       return null;
     }
     if (resultSet.getArray(names[0]) == null) {
       return new Integer[0];
     }
-
-    Array array = resultSet.getArray(names[0]);
-    @SuppressWarnings("unchecked")
-    T javaArray = (T) array.getArray();
+    final Array array = resultSet.getArray(names[0]);
+    final T javaArray = (T) array.getArray();
     return javaArray;
   }
 
   @Override
-  public void nullSafeSet(PreparedStatement statement,
-                          Object value,
-                          int index,
-                          SharedSessionContractImplementor sharedSessionContractImplementor
+  public void nullSafeSet(final PreparedStatement statement,
+                          final Object value,
+                          final int index,
+                          final SharedSessionContractImplementor sharedSessionContractImplementor
   ) throws HibernateException, SQLException {
-    Connection connection = statement.getConnection();
+    final Connection connection = statement.getConnection();
     if (value == null) {
       statement.setNull(index, SQL_TYPES[0]);
     } else {
-      @SuppressWarnings("unchecked")
-      T castObject = (T) value;
-      Array array = connection.createArrayOf("integer", (Object[]) castObject);
+      final T castObject = (T) value;
+      final Array array = connection.createArrayOf("integer", (Object[]) castObject);
       statement.setArray(index, array);
     }
   }
@@ -113,7 +115,9 @@ public class ArrayType<T extends Serializable> implements UserType {
   }
 
   @Override
-  public Object replace(Object original, Object target, Object owner) throws HibernateException {
+  public Object replace(final Object original,
+                        final Object target,
+                        final Object owner) throws HibernateException {
     return original;
   }
 

@@ -35,6 +35,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Set;
 
+/**
+ * Tag controller.
+ */
 @RestController
 @CrossOrigin
 @RequestMapping(
@@ -45,36 +48,28 @@ public class TagController {
 
   private InstagramTagService instagramTagService;
 
+  /**
+   * Ctor.
+   *
+   * @param instagramTagService {@link InstagramTagService}
+   */
   @Autowired
-  public TagController(InstagramTagService instagramTagService) {
+  public TagController(final InstagramTagService instagramTagService) {
     this.instagramTagService = instagramTagService;
   }
 
   /**
    * Get existing tags.
+   *
    * @param titles tags titles
    * @return list of existing tags
    */
   @RequestMapping(
       value = "/{title}",
-      produces = {"application/json"},
       method = RequestMethod.GET
   )
-  public ListResponseEntity getTag(@PathVariable("title") Set<String> titles) {
+  public ListResponseEntity getTag(@PathVariable("title") final Set<String> titles) {
     return new ListResponseEntity(instagramTagService.getTags(titles));
-  }
-
-  /**
-   * Delete tags from db.
-   * @param titles tags titles
-   */
-  @RequestMapping(
-      value = "/{title}",
-      produces = {"application/json"},
-      method = RequestMethod.DELETE
-  )
-  public void deleteTag(@PathVariable("title") Set<String> titles) {
-    instagramTagService.deleteTags(titles);
   }
 
   /**
@@ -85,10 +80,9 @@ public class TagController {
    */
   @RequestMapping(
       value = "/import/{title}",
-      produces = {"application/json"},
       method = RequestMethod.GET
   )
-  public ListResponseEntity addTag(@PathVariable("title") Set<String> tags) {
+  public ListResponseEntity addTag(@PathVariable("title") final Set<String> tags) {
     return new ListResponseEntity(instagramTagService.addTag(tags));
   }
 

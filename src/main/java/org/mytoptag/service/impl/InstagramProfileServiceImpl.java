@@ -47,20 +47,34 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
+
+/**
+ * {@link InstagramProfileService} implementation.
+ */
 @Service
 @Slf4j
 public class InstagramProfileServiceImpl implements InstagramProfileService {
 
   private static final String INSTAGRAM_URL = "https://www.instagram.com/";
+
   private static final String JSON_KEY = "window._sharedData = ";
 
+  private static final String HASH_SIGN = "#";
+
   private InstagramTagService tagService;
+
   private InstagramPostRepository postRepository;
 
+  /**
+   * Ctor.
+   *
+   * @param instagramTagService {@link InstagramTagService}
+   * @param postRepository {@link InstagramPostRepository}
+   */
   @Autowired
   public InstagramProfileServiceImpl(
-      InstagramTagService instagramTagService,
-      InstagramPostRepository postRepository) {
+      final InstagramTagService instagramTagService,
+      final InstagramPostRepository postRepository) {
     this.tagService = instagramTagService;
     this.postRepository = postRepository;
   }
@@ -76,14 +90,14 @@ public class InstagramProfileServiceImpl implements InstagramProfileService {
   public List<InstagramPost> importLastPosts(final String username) throws IOException {
     log.info("importing posts for account {}", username);
     final InstagramProfile profile = retrieveInstagramProfile(username);
-    List<InstagramPost> posts = profile.getPosts();
-    List<String> codes = posts.stream()
+    final List<InstagramPost> posts = profile.getPosts();
+    final List<String> codes = posts.stream()
         .map(InstagramPost::getShortCode)
         .collect(Collectors.toList());
-    List<String> existingCodes = postRepository.findByShortCodeIn(codes).stream()
+    final List<String> existingCodes = postRepository.findByShortCodeIn(codes).stream()
         .map(InstagramPost::getShortCode)
         .collect(Collectors.toList());
-    List<InstagramPost> result = posts.stream()
+    final List<InstagramPost> result = posts.stream()
         .filter(p -> !existingCodes.contains(p.getShortCode()))
         .map(this::savePost).collect(Collectors.toList());
     log.info("import for account {} is complete! {} new posts have been added",
@@ -91,15 +105,15 @@ public class InstagramProfileServiceImpl implements InstagramProfileService {
     return result;
   }
 
-  private InstagramPost savePost(InstagramPost post) {
+  private InstagramPost savePost(final InstagramPost post) {
     log.info("saving post {}", post.getShortCode());
-    InstagramPost existing = postRepository.findByIgId(post.getIgId());
+    final InstagramPost existing = postRepository.findByIgId(post.getIgId());
     if (existing != null) {
       log.info("post with a code {} is already imported", post.getShortCode());
       return existing;
     }
     log.info("saving new post {} to db", post.getShortCode());
-    List<InstagramTag> tags = tagService.addTag(tagsFromText(post.getText()));
+    final List<InstagramTag> tags = tagService.addTag(tagsFromText(post.getText()));
     post.setTags(new HashSet<>(tags));
     return postRepository.save(post);
   }
@@ -110,7 +124,7 @@ public class InstagramProfileServiceImpl implements InstagramProfileService {
    * @param shortCodes codes of instagram post
    * @return list of posts
    */
-  public List<InstagramPost> findPosts(List<String> shortCodes) {
+  public List<InstagramPost> findPosts(final List<String> shortCodes) {
     return postRepository.findByShortCodeIn(shortCodes);
   }
 
@@ -127,23 +141,23 @@ public class InstagramProfileServiceImpl implements InstagramProfileService {
   }
 
   private InstagramProfile retrieveInstagramProfile(final String username) throws IOException {
-    Document document = Jsoup.connect(INSTAGRAM_URL + username).get();
-    String jsonData = document.body()
+    final Document document = Jsoup.connect(INSTAGRAM_URL + username).get();
+    final String jsonData = document.body()
         .getElementsByTag("script")
         .first()
         .childNode(0)
         .toString();
-    String jsonString = jsonData.substring(JSON_KEY.length(), jsonData.length() - 1);
+    final String jsonString = jsonData.substring(JSON_KEY.length(), jsonData.length() - 1);
     return new ObjectMapper().readValue(jsonString, InstagramProfile.class);
   }
 
-  private Set<String> tagsFromText(String text) {
+  private Set<String> tagsFromText(final String text) {
     return Optional.ofNullable(text).map(
         t -> Arrays.stream(text.split(" |\n"))
-            .filter(word -> word.startsWith("#"))
-            .map(word -> word.substring(word.indexOf('#'), word.length()))
+            .filter(word -> word.startsWith(HASH_SIGN))
+            .map(word -> word.substring(word.indexOf(HASH_SIGN), word.length()))
             .map(String::toLowerCase)
-            .flatMap(word -> Arrays.stream(word.split("#")).skip(1))
+            .flatMap(word -> Arrays.stream(word.split(HASH_SIGN)).skip(1))
             .collect(Collectors.toSet())
     ).orElse(Collections.EMPTY_SET);
   }

@@ -24,7 +24,7 @@
 
 package org.mytoptag.service;
 
-import org.mytoptag.controller.ObjectNotFoundException;
+import org.mytoptag.exception.ObjectNotFoundException;
 import org.mytoptag.model.InstagramTag;
 import org.mytoptag.model.InstagramTagCount;
 
@@ -32,6 +32,9 @@ import java.util.List;
 import java.util.Set;
 
 
+/**
+ * Instagram tag service.
+ */
 public interface InstagramTagService {
 
   /**
@@ -69,6 +72,7 @@ public interface InstagramTagService {
    * Updates existing tags history.
    *
    * @param tags InstagramTag list
+   * @return list of {@link InstagramTagCount}
    */
   List<InstagramTagCount> updateTagHistory(List<InstagramTag> tags);
 

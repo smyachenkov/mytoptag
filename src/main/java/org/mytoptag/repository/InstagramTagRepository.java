@@ -33,14 +33,41 @@ import java.util.List;
 import java.util.Set;
 import javax.transaction.Transactional;
 
+
+/**
+ * {@link InstagramTag} repository.
+ */
 public interface InstagramTagRepository extends JpaRepository<InstagramTag, Integer> {
 
+  /**
+   * Find tag by title.
+   *
+   * @param title tag title
+   * @return InstagramTag
+   */
   InstagramTag findByTitle(String title);
 
+  /**
+   * Find tags by their's titles.
+   *
+   * @param names set of tag titles.
+   * @return list of {@link InstagramTag}
+   */
   List<InstagramTag> findByTitleIn(Set<String> names);
 
+  /**
+   * Find all tags in repo.
+   *
+   * @return list of {@link InstagramTag}
+   */
   List<InstagramTag> findAll();
 
+  /**
+   * Find tags with expired count.
+   *
+   * @param size limit
+   * @return List of tags ids
+   */
   @Query(
       nativeQuery = true,
       value = "select t.id from \n"
@@ -54,6 +81,12 @@ public interface InstagramTagRepository extends JpaRepository<InstagramTag, Inte
   )
   List<Integer> findNotUpdated(@Param("size") Integer size);
 
+
+  /**
+   * Count number of expired tags.
+   *
+   * @return number of expired tags in repo.
+   */
   @Query(
       nativeQuery = true,
       value = "select count(1) from \n"
@@ -65,6 +98,12 @@ public interface InstagramTagRepository extends JpaRepository<InstagramTag, Inte
   )
   Integer countNotUpdated();
 
+
+  /**
+   * Delete tag from repo.
+   *
+   * @param title tag title
+   */
   @Transactional
   void deleteByTitle(String title);
 }

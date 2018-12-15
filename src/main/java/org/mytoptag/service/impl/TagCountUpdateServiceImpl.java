@@ -37,6 +37,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
+
+/**
+ * {@link TagCountUpdateService} implementation.
+ */
 @Service
 @Slf4j
 public class TagCountUpdateServiceImpl implements TagCountUpdateService {
@@ -47,10 +51,16 @@ public class TagCountUpdateServiceImpl implements TagCountUpdateService {
 
   private InstagramTagService tagService;
 
+  /**
+   * Ctor.
+   *
+   * @param instagramTagRepository {@link InstagramTagRepository}
+   * @param instagramTagService {@link InstagramTagService}
+   */
   @Autowired
   public TagCountUpdateServiceImpl(
-      InstagramTagRepository instagramTagRepository,
-      InstagramTagService instagramTagService) {
+      final InstagramTagRepository instagramTagRepository,
+      final InstagramTagService instagramTagService) {
     this.tagRepository = instagramTagRepository;
     this.tagService = instagramTagService;
   }
@@ -64,7 +74,7 @@ public class TagCountUpdateServiceImpl implements TagCountUpdateService {
     final List<InstagramTag> tags = tagRepository.findAllById(tagIds);
     log.info("updating tag count for tags {}",
         tags.stream().map(InstagramTag::getTitle).collect(Collectors.toList()));
-    tagService.updateTagHistory(tags);
+    this.tagService.updateTagHistory(tags);
     log.info("tag update complete");
   }
 }

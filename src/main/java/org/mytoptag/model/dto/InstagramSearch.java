@@ -28,11 +28,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.mytoptag.model.InstagramTag;
 import org.mytoptag.model.deserializer.InstagramSearchDeserializer;
 
 import java.util.List;
 
+/**
+ * Instagram search result DTO.
+ */
 @Getter
 @Setter
 @AllArgsConstructor

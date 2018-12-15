@@ -48,9 +48,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
+/**
+ * {@link SuggestionService} implementation.
+ */
 @Service
 @Slf4j
 public class SuggestionServiceImpl implements SuggestionService {
+
+  private static final Integer SCALE = 5;
 
   private InstagramTagRepository tagRepository;
 
@@ -61,7 +67,6 @@ public class SuggestionServiceImpl implements SuggestionService {
   @Value("${spring.jpa.properties.hibernate.jdbc.batch_size}")
   private Integer maxBatchSize;
 
-  private static final Integer SCALE = 5;
 
   /**
    * Ctor.
@@ -72,9 +77,9 @@ public class SuggestionServiceImpl implements SuggestionService {
    */
   @Autowired
   public SuggestionServiceImpl(
-      InstagramTagRepository tagRepository,
-      CompatibilityRepository compatibilityRepository,
-      PostsOfTagRepository postsOfTagRepository) {
+      final InstagramTagRepository tagRepository,
+      final CompatibilityRepository compatibilityRepository,
+      final PostsOfTagRepository postsOfTagRepository) {
     this.tagRepository = tagRepository;
     this.compatibilityRepository = compatibilityRepository;
     this.postsOfTagRepository = postsOfTagRepository;
@@ -86,22 +91,22 @@ public class SuggestionServiceImpl implements SuggestionService {
   @Async("processExecutor")
   public void updateCompatibilityMatrix() {
     compatibilityRepository.clearCompatibilityMatrix();
-    Map<Integer, List<Integer>> tagsMap = postsOfTagRepository.findAll()
+    final Map<Integer, List<Integer>> tagsMap = postsOfTagRepository.findAll()
         .stream()
         .collect(Collectors.toMap(PostsOfTag::getTag, v -> Arrays.asList(v.getPosts())));
     final Integer[] tags = tagsMap.keySet().toArray(new Integer[0]);
     final int matrixSize = tags.length;
     for (int i = 0; i < matrixSize; i++) {
       log.info("Calculating compatibility for tag {}", tags[i]);
-      Integer allPostsOccurrence = tagsMap.get(tags[i]).size();
-      List<Compatibility> compatibilities = new ArrayList<>();
+      final Integer allPostsOccurrence = tagsMap.get(tags[i]).size();
+      final List<Compatibility> compatibilities = new ArrayList<>();
       for (int j = matrixSize - 1; j > i; j--) {
-        long compatiblePosts = tagsMap.get(tags[i])
+        final long compatiblePosts = tagsMap.get(tags[i])
             .stream()
             .filter(tagsMap.get(tags[j])::contains)
             .count();
         if (compatiblePosts > 0) {
-          BigDecimal compatibilityValue = new BigDecimal(compatiblePosts).divide(
+          final BigDecimal compatibilityValue = new BigDecimal(compatiblePosts).divide(
               BigDecimal.valueOf(allPostsOccurrence),
               SCALE,
               BigDecimal.ROUND_HALF_UP
@@ -122,7 +127,7 @@ public class SuggestionServiceImpl implements SuggestionService {
   }
 
   private void saveInBatches(final List<Compatibility> compatibilities) {
-    List<Compatibility> batch = new ArrayList<>();
+    final List<Compatibility> batch = new ArrayList<>();
     for (int i = 0; i < compatibilities.size(); i++) {
       batch.add(compatibilities.get(i));
       if (batch.size() == maxBatchSize || i == compatibilities.size() - 1) {
@@ -141,7 +146,7 @@ public class SuggestionServiceImpl implements SuggestionService {
   public List<TagSuggestion> getRecommendations(final Set<String> tags) {
     final List<InstagramTag> originalTags = tagRepository.findByTitleIn(tags);
     final List<TagSuggestionQueryResult> compatibilities =
-        compatibilityRepository.getCompatiblePosts(
+        compatibilityRepository.getCompatibleTags(
             originalTags.stream().map(InstagramTag::getId).collect(Collectors.toList())
         );
     return compatibilities.stream().map(TagSuggestion::new).collect(Collectors.toList());

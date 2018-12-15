@@ -32,6 +32,9 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+/**
+ * Key for {@link Compatibility} model.
+ */
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor

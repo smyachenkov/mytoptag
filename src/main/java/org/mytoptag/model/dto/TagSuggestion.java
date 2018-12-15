@@ -31,6 +31,9 @@ import org.mytoptag.model.dto.query.TagSuggestionQueryResult;
 
 import java.math.BigDecimal;
 
+/**
+ * Tag suggestion dto.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -47,7 +50,7 @@ public class TagSuggestion {
    *
    * @param tagSuggestionQueryResult {@link TagSuggestionQueryResult}
    */
-  public TagSuggestion(TagSuggestionQueryResult tagSuggestionQueryResult) {
+  public TagSuggestion(final TagSuggestionQueryResult tagSuggestionQueryResult) {
     this.tag = tagSuggestionQueryResult.getTitle();
     this.compatibility = tagSuggestionQueryResult.getCompatibility();
     this.count = tagSuggestionQueryResult.getCount();

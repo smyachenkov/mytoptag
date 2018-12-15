@@ -33,27 +33,42 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+/**
+ *  Main app class.
+ */
 @SpringBootApplication
 @EnableScheduling
 @Configurable
 @EnableAsync
 public class MyTopTag {
 
-  public static void main(String[] args) {
+  private static final Integer TPTE_CORE_POOL_SIZE = 3;
+
+  private static final Integer TPTE_MAX_POOL_SIZE = 3;
+
+  private static final Integer TPTE_MAX_QUEUE_CAPACITY = 600;
+
+  /**
+   * Main method.
+   *
+   * @param args params
+   */
+  public static void main(final String[] args) {
     SpringApplication.run(MyTopTag.class, args);
   }
 
   /**
    * Async task executor.
+   *
    * @return thread pool task executor
    */
   @Bean(name = "processExecutor")
   public TaskExecutor workExecutor() {
-    ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+    final ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
     threadPoolTaskExecutor.setThreadNamePrefix("Async-");
-    threadPoolTaskExecutor.setCorePoolSize(3);
-    threadPoolTaskExecutor.setMaxPoolSize(3);
-    threadPoolTaskExecutor.setQueueCapacity(600);
+    threadPoolTaskExecutor.setCorePoolSize(TPTE_CORE_POOL_SIZE);
+    threadPoolTaskExecutor.setMaxPoolSize(TPTE_MAX_POOL_SIZE);
+    threadPoolTaskExecutor.setQueueCapacity(TPTE_MAX_QUEUE_CAPACITY);
     threadPoolTaskExecutor.afterPropertiesSet();
     return threadPoolTaskExecutor;
   }

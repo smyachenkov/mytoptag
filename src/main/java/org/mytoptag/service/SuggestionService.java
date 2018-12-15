@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.Set;
 
 
+/**
+ * Instagram tag suggestions service.
+ */
 public interface SuggestionService {
 
   /**
