@@ -98,7 +98,7 @@ public class ProfileImportServiceImpl implements ProfileImportService {
   /**
    * Process import for profile import queue.
    */
-  @Scheduled(cron = "0 0/10 * * * *")
+  @Scheduled(cron = "${cron.profileimport}")
   public void processImport() {
     this.lock.lock();
     try {

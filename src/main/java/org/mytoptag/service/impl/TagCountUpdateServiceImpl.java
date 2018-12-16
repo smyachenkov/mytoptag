@@ -66,7 +66,7 @@ public class TagCountUpdateServiceImpl implements TagCountUpdateService {
   }
 
   @Override
-  @Scheduled(cron = "0 0/15 * * * *")
+  @Scheduled(cron = "${cron.tagcount.update}")
   @Transactional
   public void updateTagCount() {
     log.info("there are {} tags without actual count number", tagRepository.countNotUpdated());
@@ -74,7 +74,7 @@ public class TagCountUpdateServiceImpl implements TagCountUpdateService {
     final List<InstagramTag> tags = tagRepository.findAllById(tagIds);
     log.info("updating tag count for tags {}",
         tags.stream().map(InstagramTag::getTitle).collect(Collectors.toList()));
-    this.tagService.updateTagHistory(tags);
+    tagService.updateTagHistory(tags);
     log.info("tag update complete");
   }
 }
