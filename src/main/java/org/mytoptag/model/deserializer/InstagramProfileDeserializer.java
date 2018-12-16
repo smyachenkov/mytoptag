@@ -32,22 +32,24 @@ import org.mytoptag.model.InstagramPost;
 import org.mytoptag.model.InstagramProfile;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Custom deserializer for instagram profile page response.
+ */
 public class InstagramProfileDeserializer extends StdDeserializer<InstagramProfile> {
 
   protected InstagramProfileDeserializer() {
     this(null);
   }
 
-  protected InstagramProfileDeserializer(Class<?> vc) {
+  protected InstagramProfileDeserializer(final Class<?> vc) {
     super(vc);
   }
 
   @Override
-  public InstagramProfile deserialize(JsonParser parser, DeserializationContext context)
+  public InstagramProfile deserialize(final JsonParser parser, final DeserializationContext context)
       throws IOException {
     final JsonNode node = parser.getCodec().readTree(parser);
     final List<InstagramPost> posts = parsePosts(node);
@@ -55,7 +57,7 @@ public class InstagramProfileDeserializer extends StdDeserializer<InstagramProfi
     return new InstagramProfile(username, posts);
   }
 
-  private String parseUserName(JsonNode node) {
+  private String parseUserName(final JsonNode node) {
     return node.get("entry_data")
         .get("ProfilePage")
         .get(0)
@@ -65,9 +67,9 @@ public class InstagramProfileDeserializer extends StdDeserializer<InstagramProfi
         .asText();
   }
 
-  private List<InstagramPost> parsePosts(JsonNode node) {
+  private List<InstagramPost> parsePosts(final JsonNode node) {
     final List<InstagramPost> posts = new ArrayList<>();
-    JsonNode mediaNodes = node.get("entry_data")
+    final JsonNode mediaNodes = node.get("entry_data")
         .get("ProfilePage")
         .get(0)
         .get("graphql")
@@ -75,9 +77,9 @@ public class InstagramProfileDeserializer extends StdDeserializer<InstagramProfi
         .get("edge_owner_to_timeline_media")
         .get("edges");
     for (int i = 0; i < mediaNodes.size(); i++) {
-      JsonNode mediaNode = mediaNodes.get(i).get("node");
-      Long id = mediaNode.get("id").asLong();
-      JsonNode edgesArray = mediaNode
+      final JsonNode mediaNode = mediaNodes.get(i).get("node");
+      final Long id = mediaNode.get("id").asLong();
+      final JsonNode edgesArray = mediaNode
           .get("edge_media_to_caption")
           .get("edges");
       final String text;
@@ -89,17 +91,17 @@ public class InstagramProfileDeserializer extends StdDeserializer<InstagramProfi
       } else {
         text = "";
       }
-      Integer likedBy = mediaNode
+      final Integer likedBy = mediaNode
             .get("edge_media_preview_like")
           .get("count")
           .asInt();
-      String previewLink = mediaNode
+      final String previewLink = mediaNode
           .get("display_url")
           .asText();
-      String shortCode = mediaNode
+      final String shortCode = mediaNode
           .get("shortcode")
           .asText();
-      Long timeStamp = mediaNode
+      final Long timeStamp = mediaNode
           .get("taken_at_timestamp")
           .asLong();
       posts.add(new InstagramPost(id, text, likedBy, previewLink, shortCode, timeStamp));

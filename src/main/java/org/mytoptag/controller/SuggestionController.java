@@ -36,6 +36,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * Tag suggestion controller.
+ */
 @RestController
 @CrossOrigin
 @RequestMapping(
@@ -46,8 +49,13 @@ public class SuggestionController {
 
   private SuggestionService suggestionService;
 
+  /**
+   * Ctor.
+   *
+   * @param suggestionService {@link SuggestionService}
+   */
   @Autowired
-  public SuggestionController(SuggestionService suggestionService) {
+  public SuggestionController(final SuggestionService suggestionService) {
     this.suggestionService = suggestionService;
   }
 
@@ -56,23 +64,23 @@ public class SuggestionController {
    */
   @RequestMapping(
       value = "/update",
-      produces = {"application/json"},
       method = RequestMethod.GET
   )
   public void updateTagMatrix() {
-    suggestionService.updateCompatibilityMatrix();
+    this.suggestionService.updateCompatibilityMatrix();
   }
 
   /**
    * Get most relevant tags for current user's.
+   *
+   * @param tags list of tags
    * @return list of {@link TagSuggestion}
    */
   @RequestMapping(
       value = "/tags/{tags}",
-      produces = {"application/json"},
       method = RequestMethod.GET
   )
-  public List<TagSuggestion> getRecommendations(@PathVariable("tags") List<String> tags) {
+  public List<TagSuggestion> getRecommendations(@PathVariable("tags") final List<String> tags) {
     return suggestionService.getRecommendations(new HashSet<>(tags));
   }
 

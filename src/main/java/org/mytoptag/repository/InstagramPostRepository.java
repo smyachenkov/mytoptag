@@ -29,10 +29,25 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+/**
+ * {@link InstagramPost} repository.
+ */
 public interface InstagramPostRepository extends JpaRepository<InstagramPost, String> {
 
+  /**
+   * Find posts by it's instagram id.
+   *
+   * @param igId instagram post id
+   * @return InstagramPost
+   */
   InstagramPost findByIgId(Long igId);
 
+  /**
+   * Find posts by short code.
+   *
+   * @param shortCodes list of instagram short codes
+   * @return list of {@link InstagramPost}
+   */
   List<InstagramPost> findByShortCodeIn(List<String> shortCodes);
 
 }

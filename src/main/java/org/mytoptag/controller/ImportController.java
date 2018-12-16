@@ -35,6 +35,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Tag and profile import controller.
+ */
 @RestController
 @CrossOrigin
 @RequestMapping(
@@ -46,8 +49,13 @@ public class ImportController {
 
   private ProfileImportService profileImportService;
 
+  /**
+   * Ctor.
+   *
+   * @param profileImportService {@link ProfileImportService}
+   */
   @Autowired
-  public ImportController(ProfileImportService profileImportService) {
+  public ImportController(final ProfileImportService profileImportService) {
     this.profileImportService = profileImportService;
   }
 
@@ -62,7 +70,7 @@ public class ImportController {
       method = RequestMethod.POST,
       consumes = {"application/json"}
   )
-  public ImportProfileResponse addToQueue(@RequestBody ProfileListRequest profileList) {
+  public ImportProfileResponse addToQueue(@RequestBody final ProfileListRequest profileList) {
     return profileImportService.add(profileList.getProfiles());
   }
 

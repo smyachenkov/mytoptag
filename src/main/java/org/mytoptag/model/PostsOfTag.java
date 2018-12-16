@@ -24,7 +24,6 @@
 
 package org.mytoptag.model;
 
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
@@ -34,6 +33,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+
+/**
+ * Posts of tag model.
+ */
 @Data
 @NoArgsConstructor
 @Entity

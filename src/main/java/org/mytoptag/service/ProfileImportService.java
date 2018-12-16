@@ -29,6 +29,9 @@ import org.mytoptag.model.dto.response.ImportProfileResponse;
 import java.util.Set;
 
 
+/**
+ * Profile Import Service.
+ */
 public interface ProfileImportService {
 
   /**

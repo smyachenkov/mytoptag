@@ -40,6 +40,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+
+/**
+ * Instagram Tag model.
+ */
 @Data
 @NoArgsConstructor
 @Entity
@@ -58,13 +62,25 @@ public class InstagramTag {
   @JoinColumn(name = "TAG_ID")
   private List<InstagramTagCount> history = new ArrayList<>();
 
-  public InstagramTag(String title, Long igId) {
+  /**
+   * Ctor.
+   *
+   * @param title tag title
+   * @param igId instagram tag id
+   */
+  public InstagramTag(final String title,
+                      final Long igId) {
     this.title = title;
     this.igId = igId;
   }
 
+  /**
+   * Get latest entry in tag count history.
+   *
+   * @return InstagramTagCount
+   */
   @JsonIgnore
   public InstagramTagCount getLastCount() {
-    return history.isEmpty() ? null : history.get(history.size() - 1);
+    return this.history.isEmpty() ? null : this.history.get(this.history.size() - 1);
   }
 }

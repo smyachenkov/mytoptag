@@ -32,6 +32,9 @@ import org.mytoptag.model.deserializer.InstagramProfileDeserializer;
 
 import java.util.List;
 
+/**
+ * Instagram Profile model.
+ */
 @Getter
 @Setter
 @AllArgsConstructor

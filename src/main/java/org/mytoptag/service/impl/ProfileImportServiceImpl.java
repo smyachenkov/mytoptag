@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -40,11 +41,17 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
+
+/**
+ * {@link ProfileImportService} implementation.
+ */
 @Service
 @Slf4j
 public class ProfileImportServiceImpl implements ProfileImportService {
 
-  private final LinkedHashSet<String> importQueue = new LinkedHashSet<>();
+  private static final int CHUNK_SIZE = 20;
+
+  private final Set<String> importQueue = new LinkedHashSet<>();
 
   private final List<String> imported = new ArrayList<>();
 
@@ -54,15 +61,13 @@ public class ProfileImportServiceImpl implements ProfileImportService {
 
   private InstagramProfileService profileService;
 
-  private static final int CHUNK_SIZE = 20;
-
   /**
    * Ctor.
    *
    * @param profileService InstagramProfileService
    */
   @Autowired
-  public ProfileImportServiceImpl(InstagramProfileService profileService) {
+  public ProfileImportServiceImpl(final InstagramProfileService profileService) {
     this.profileService = profileService;
   }
 
@@ -75,9 +80,8 @@ public class ProfileImportServiceImpl implements ProfileImportService {
     );
   }
 
-
   @Override
-  public ImportProfileResponse add(Set<String> profiles) {
+  public ImportProfileResponse add(final Set<String> profiles) {
     this.lock.lock();
     try {
       Optional.ofNullable(profiles).ifPresent(this.importQueue::addAll);
@@ -94,7 +98,7 @@ public class ProfileImportServiceImpl implements ProfileImportService {
   /**
    * Process import for profile import queue.
    */
-  @Scheduled(cron = "0 0/10 * * * *")
+  @Scheduled(cron = "${cron.profileimport}")
   public void processImport() {
     this.lock.lock();
     try {
@@ -107,7 +111,7 @@ public class ProfileImportServiceImpl implements ProfileImportService {
             try {
               profileService.importLastPosts(profile);
               this.imported.add(profile);
-            } catch (Exception ex) {
+            } catch (final IOException ex) {
               log.info("Error processing import for profile {}", profile, ex);
               this.failed.add(profile);
             }

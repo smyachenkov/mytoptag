@@ -30,6 +30,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.mytoptag.model.deserializer.InstagramSearchDeserializer;
 
+/**
+ * Instagram tag search result model.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

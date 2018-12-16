@@ -28,7 +28,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import org.mytoptag.model.InstagramTag;
 import org.mytoptag.model.dto.InstagramSearch;
 import org.mytoptag.model.dto.InstagramTagSearchResult;
 
@@ -37,18 +36,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Custom deserializer for instagram profile and tag search response.
+ */
 public class InstagramSearchDeserializer extends StdDeserializer<InstagramSearch> {
 
   protected InstagramSearchDeserializer() {
     this(null);
   }
 
-  protected InstagramSearchDeserializer(Class<?> vc) {
+  protected InstagramSearchDeserializer(final Class<?> vc) {
     super(vc);
   }
 
   @Override
-  public InstagramSearch deserialize(JsonParser parser, DeserializationContext context)
+  public InstagramSearch deserialize(final JsonParser parser, final DeserializationContext context)
       throws IOException {
     final JsonNode node = parser.getCodec().readTree(parser);
     final List<InstagramTagSearchResult> tags = parseTags(node);
@@ -56,13 +58,13 @@ public class InstagramSearchDeserializer extends StdDeserializer<InstagramSearch
     return new InstagramSearch(users, tags);
   }
 
-  private List<InstagramTagSearchResult> parseTags(JsonNode node) {
+  private List<InstagramTagSearchResult> parseTags(final JsonNode node) {
     final List<InstagramTagSearchResult> result = new ArrayList<>();
     for (Iterator<JsonNode> it = node.get("hashtags").elements(); it.hasNext();) {
-      JsonNode tagNode = it.next().get("hashtag");
-      String name = tagNode.get("name").asText();
-      Long igId = tagNode.get("id").asLong();
-      Long count = tagNode.get("media_count").longValue();
+      final JsonNode tagNode = it.next().get("hashtag");
+      final String name = tagNode.get("name").asText();
+      final Long igId = tagNode.get("id").asLong();
+      final Long count = tagNode.get("media_count").longValue();
       result.add(new InstagramTagSearchResult(name, igId, count));
     }
     return result;

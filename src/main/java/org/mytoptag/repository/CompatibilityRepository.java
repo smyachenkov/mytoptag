@@ -34,13 +34,27 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import javax.transaction.Transactional;
 
+
+/**
+ * {@link Compatibility} repository.
+ */
 public interface CompatibilityRepository extends JpaRepository<Compatibility, Integer> {
 
+  /**
+   * Clear compatibility matrix.
+   */
   @Modifying
   @Transactional
   @Query(value = "truncate table COMPATIBILITY", nativeQuery = true)
   void clearCompatibilityMatrix();
 
+
+  /**
+   * Get posts with max compatibility.
+   *
+   * @param tagIds list of tag id's
+   * @return list of {@link TagSuggestionQueryResult}
+   */
   @Query(value =
           "select\n"
           + "  t.title,\n"
@@ -57,6 +71,6 @@ public interface CompatibilityRepository extends JpaRepository<Compatibility, In
           + "order by c.compatibility desc\n"
           + "limit 30",
       nativeQuery = true)
-  List<TagSuggestionQueryResult> getCompatiblePosts(@Param("ids") List<Integer> tagIds);
+  List<TagSuggestionQueryResult> getCompatibleTags(@Param("ids") List<Integer> tagIds);
 
 }

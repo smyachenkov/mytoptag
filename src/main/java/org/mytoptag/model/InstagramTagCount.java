@@ -41,6 +41,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+
+/**
+ * Instagram Tag Count model.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -62,7 +66,14 @@ public class InstagramTagCount {
 
   private Long count;
 
-  public InstagramTagCount(InstagramTag tag, Long count) {
+  /**
+   * Ctor.
+   *
+   * @param tag {@link InstagramTag}
+   * @param count ta count
+   */
+  public InstagramTagCount(final InstagramTag tag,
+                           final Long count) {
     this.tag = tag;
     this.count = count;
   }

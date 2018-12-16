@@ -82,7 +82,7 @@
                         <id>checkstyle</id>
                         <phase>install</phase>
                         <configuration>
-                            <configLocation>google_checks.xml</configLocation>
+                            <configLocation>https://raw.githubusercontent.com/flslkxtc/checkstyle/master/checkstyle.xml</configLocation>
                             <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>
                             <failsOnError>true</failsOnError>

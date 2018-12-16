@@ -33,38 +33,80 @@ import java.util.List;
 import java.util.Set;
 import javax.transaction.Transactional;
 
+
+/**
+ * {@link InstagramTag} repository.
+ */
 public interface InstagramTagRepository extends JpaRepository<InstagramTag, Integer> {
 
+  /**
+   * Find tag by title.
+   *
+   * @param title tag title
+   * @return InstagramTag
+   */
   InstagramTag findByTitle(String title);
 
+  /**
+   * Find tags by their's titles.
+   *
+   * @param names set of tag titles.
+   * @return list of {@link InstagramTag}
+   */
   List<InstagramTag> findByTitleIn(Set<String> names);
 
+  /**
+   * Find all tags in repo.
+   *
+   * @return list of {@link InstagramTag}
+   */
   List<InstagramTag> findAll();
 
+  /**
+   * Find tags with expired count.
+   *
+   * @param size limit
+   * @return List of tags ids
+   */
   @Query(
       nativeQuery = true,
-      value = "select t.id from \n"
-            + "  tag t\n"
-            + "left join tagcount tc\n"
-            + "  on tc.tag_id = t.id\n"
-            + "where   \n"
-            + " tc.count_date is null or tc.count_date < now() - interval '10 day'\n"
-            + "order by tc.count_date desc\n"
-            + "limit :size"
+      value = "select latest.tagid\n"
+          + " from (\n"
+          + " select t.id tagid, max(tc.count_date) date\n"
+          + " from tag t\n"
+          + " left join tagcount tc\n"
+          + "   on tc.tag_id = t.id\n"
+          + " group by t.id) latest\n"
+          + " order by date desc\n"
+          + " limit :size"
   )
   List<Integer> findNotUpdated(@Param("size") Integer size);
 
+
+  /**
+   * Count number of expired tags.
+   *
+   * @return number of expired tags in repo.
+   */
   @Query(
       nativeQuery = true,
-      value = "select count(1) from \n"
-            + "  tag t\n"
-            + "left join tagcount tc\n"
-            + "  on tc.tag_id = t.id\n"
-            + "where   \n"
-            + " tc.count_date is null or tc.count_date < now() - interval '10 day'"
+      value = "select count(1)\n"
+          + " from ( \n"
+          + " select t.id tagid, max(tc.count_date) date \n"
+          + " from tag t \n"
+          + " left join tagcount tc\n"
+          + " \ton tc.tag_id = t.id\n"
+          + " group by t.id) latest\n"
+          + " where latest.date is null or latest.date < now() - interval '30 day'"
   )
   Integer countNotUpdated();
 
+
+  /**
+   * Delete tag from repo.
+   *
+   * @param title tag title
+   */
   @Transactional
   void deleteByTitle(String title);
 }

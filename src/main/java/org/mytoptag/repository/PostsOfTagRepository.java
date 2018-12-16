@@ -27,5 +27,8 @@ package org.mytoptag.repository;
 import org.mytoptag.model.PostsOfTag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+/**
+ * {@link PostsOfTag} repository.
+ */
 public interface PostsOfTagRepository extends JpaRepository<PostsOfTag, Integer> {
 }

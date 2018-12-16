@@ -26,12 +26,30 @@ package org.mytoptag.model.dto.query;
 
 import java.math.BigDecimal;
 
+/**
+ * Tag suggestion query result for CompatibilityRepository#getCompatibleTags response.
+ */
 public interface TagSuggestionQueryResult {
 
+  /**
+   * Get tag title.
+   *
+   * @return tag title
+   */
   String getTitle();
 
+  /**
+   * Get tag compatibility.
+   *
+   * @return compatibility percent
+   */
   BigDecimal getCompatibility();
 
+  /**
+   * Get tag count.
+   *
+   * @return tag count
+   */
   Integer getCount();
 
 }
