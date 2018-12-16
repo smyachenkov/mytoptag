@@ -70,14 +70,15 @@ public interface InstagramTagRepository extends JpaRepository<InstagramTag, Inte
    */
   @Query(
       nativeQuery = true,
-      value = "select t.id from \n"
-            + "  tag t\n"
-            + "left join tagcount tc\n"
-            + "  on tc.tag_id = t.id\n"
-            + "where   \n"
-            + " tc.count_date is null or tc.count_date < now() - interval '10 day'\n"
-            + "order by tc.count_date desc\n"
-            + "limit :size"
+      value = "select latest.tagid\n" +
+          " from (\n" +
+          " select t.id tagid, max(tc.count_date) date\n" +
+          " from tag t\n" +
+          " left join tagcount tc\n" +
+          "   on tc.tag_id = t.id\n" +
+          " group by t.id) latest\n" +
+          " order by date desc\n" +
+          " limit :size"
   )
   List<Integer> findNotUpdated(@Param("size") Integer size);
 
@@ -89,12 +90,14 @@ public interface InstagramTagRepository extends JpaRepository<InstagramTag, Inte
    */
   @Query(
       nativeQuery = true,
-      value = "select count(1) from \n"
-            + "  tag t\n"
-            + "left join tagcount tc\n"
-            + "  on tc.tag_id = t.id\n"
-            + "where   \n"
-            + " tc.count_date is null or tc.count_date < now() - interval '10 day'"
+      value = "select count(1)\n" +
+          " from ( \n" +
+          " select t.id tagid, max(tc.count_date) date \n" +
+          " from tag t \n" +
+          " left join tagcount tc\n" +
+          " \ton tc.tag_id = t.id\n" +
+          " group by t.id) latest\n" +
+          " where latest.date is null or latest.date < now() - interval '30 day'"
   )
   Integer countNotUpdated();
 
