@@ -27,34 +27,19 @@ package org.mytoptag.model.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mytoptag.model.dto.query.TagCategorySuggestionQueryResult;
+
+import java.util.List;
 
 /**
- * Tag suggestion dto.
+ * Category suggestion dto.
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TagSuggestion {
+public class CategorySuggestion {
 
-  private String tag;
+  private String title;
 
-  private Integer count;
+  private List<TagSuggestion> tagSuggestions;
 
-  private String category;
-
-  private Integer sortOrder;
-
-
-  /**
-   * Ctor.
-   *
-   * @param tagCategorySuggestionQueryResult {@link TagCategorySuggestionQueryResult}
-   */
-  public TagSuggestion(final TagCategorySuggestionQueryResult tagCategorySuggestionQueryResult) {
-    this.tag = tagCategorySuggestionQueryResult.getTag();
-    this.count = tagCategorySuggestionQueryResult.getCount();
-    this.category = tagCategorySuggestionQueryResult.getCategory();
-    this.sortOrder = tagCategorySuggestionQueryResult.getSortOrder();
-  }
 }
