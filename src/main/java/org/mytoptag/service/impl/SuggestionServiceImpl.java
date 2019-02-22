@@ -27,12 +27,11 @@ package org.mytoptag.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.mytoptag.model.Compatibility;
 import org.mytoptag.model.CompatibilityKey;
-import org.mytoptag.model.InstagramTag;
 import org.mytoptag.model.PostsOfTag;
 import org.mytoptag.model.dto.TagSuggestion;
-import org.mytoptag.model.dto.query.TagSuggestionQueryResult;
+import org.mytoptag.model.dto.query.TagCategorySuggestionQueryResult;
+import org.mytoptag.repository.CategoryRepository;
 import org.mytoptag.repository.CompatibilityRepository;
-import org.mytoptag.repository.InstagramTagRepository;
 import org.mytoptag.repository.PostsOfTagRepository;
 import org.mytoptag.service.SuggestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +42,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,31 +60,36 @@ public class SuggestionServiceImpl implements SuggestionService {
 
   private static final Integer SCALE = 5;
 
-  private InstagramTagRepository tagRepository;
+  private static final Integer MAX_NUMBER_IN_CATEGORY = 10;
+
+  private static final Integer MAX_NUMBER_IN_POST = 30;
+
+  private static final Integer MAX_TAGS_FROM_SINGLE_CATEGORY = 5;
 
   private PostsOfTagRepository postsOfTagRepository;
 
   private CompatibilityRepository compatibilityRepository;
 
+  private CategoryRepository categoryRepository;
+
   @Value("${spring.jpa.properties.hibernate.jdbc.batch_size}")
   private Integer maxBatchSize;
-
 
   /**
    * Ctor.
    *
-   * @param tagRepository           instagram tag repo.
-   * @param compatibilityRepository compatibility matrix repo.
-   * @param postsOfTagRepository    posts of tag repo.
+   * @param compatibilityRepository {@link CompatibilityRepository}
+   * @param postsOfTagRepository    {@link PostsOfTagRepository}
+   * @param categoryRepository      {@link CategoryRepository}
    */
   @Autowired
   public SuggestionServiceImpl(
-      final InstagramTagRepository tagRepository,
       final CompatibilityRepository compatibilityRepository,
-      final PostsOfTagRepository postsOfTagRepository) {
-    this.tagRepository = tagRepository;
+      final PostsOfTagRepository postsOfTagRepository,
+      final CategoryRepository categoryRepository) {
     this.compatibilityRepository = compatibilityRepository;
     this.postsOfTagRepository = postsOfTagRepository;
+    this.categoryRepository = categoryRepository;
   }
 
   /**
@@ -138,18 +145,44 @@ public class SuggestionServiceImpl implements SuggestionService {
   }
 
   /**
-   * Retrieves most relevant tags according to compatibility matrix.
+   * Retrieves most relevant tags according to tag category relations.
    *
-   * @param tags set of users tags
+   * @param input set of users tags
    * @return List of {@link TagSuggestion}
    */
-  public List<TagSuggestion> getRecommendations(final Set<String> tags) {
-    final List<InstagramTag> originalTags = tagRepository.findByTitleIn(tags);
-    final List<TagSuggestionQueryResult> compatibilities =
-        compatibilityRepository.getCompatibleTags(
-            originalTags.stream().map(InstagramTag::getId).collect(Collectors.toList())
-        );
-    return compatibilities.stream().map(TagSuggestion::new).collect(Collectors.toList());
+  public List<TagSuggestion> getRecommendations(final Set<String> input) {
+    final Map<String, Map<String, List<TagSuggestion>>> inputResult = new HashMap<>();
+    input.forEach(i -> {
+      final List<TagCategorySuggestionQueryResult> queryResults = categoryRepository.findRelevantTags(i);
+      final Map<String, List<TagSuggestion>> inputSearchResult =
+          queryResults.stream()
+              .collect(Collectors.groupingBy(TagCategorySuggestionQueryResult::getCategory))
+              .entrySet().stream()
+              .collect(
+                  Collectors.toMap(
+                      Map.Entry::getKey,
+                      e -> e.getValue().stream().map(TagSuggestion::new).collect(Collectors.toList()),
+                      (u, v) -> {
+                        throw new IllegalStateException("Duplicate key");
+                        },
+                      LinkedHashMap::new
+                  )
+             );
+      inputResult.put(i, inputSearchResult);
+    });
+    // todo log full search data
+    // todo limit final output to 30
+    // todo get 1 element from each input and each category until full
+    final List<TagSuggestion> suggestions = new LinkedList<>();
+    // currently collects top 5 tags from each category
+    inputResult.forEach((i, res) -> {
+      suggestions.addAll(
+          res.values().stream()
+              .flatMap(List::stream)
+              .limit(MAX_TAGS_FROM_SINGLE_CATEGORY)
+              .collect(Collectors.toList()));
+    });
+    return suggestions;
   }
 
 }

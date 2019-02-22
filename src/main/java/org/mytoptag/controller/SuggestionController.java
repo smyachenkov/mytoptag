@@ -24,6 +24,7 @@
 
 package org.mytoptag.controller;
 
+import org.mytoptag.model.dto.ListResponseEntity;
 import org.mytoptag.model.dto.TagSuggestion;
 import org.mytoptag.service.SuggestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,29 +60,19 @@ public class SuggestionController {
     this.suggestionService = suggestionService;
   }
 
-  /**
-   * Update tags compatibility matrix.
-   */
-  @RequestMapping(
-      value = "/update",
-      method = RequestMethod.GET
-  )
-  public void updateTagMatrix() {
-    this.suggestionService.updateCompatibilityMatrix();
-  }
 
   /**
    * Get most relevant tags for current user's.
    *
-   * @param tags list of tags
+   * @param search list of category strings
    * @return list of {@link TagSuggestion}
    */
   @RequestMapping(
-      value = "/tags/{tags}",
+      value = "/{search}",
       method = RequestMethod.GET
   )
-  public List<TagSuggestion> getRecommendations(@PathVariable("tags") final List<String> tags) {
-    return suggestionService.getRecommendations(new HashSet<>(tags));
+  public ListResponseEntity getRecommendations(@PathVariable("search") final List<String> search) {
+    return new ListResponseEntity(suggestionService.getRecommendations(new HashSet<>(search)));
   }
 
 }

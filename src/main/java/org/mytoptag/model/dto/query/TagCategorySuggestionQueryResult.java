@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Stanislav Myachenkov
+ * Copyright (c) 2019 Stanislav Myachenkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,39 +22,39 @@
  *
  */
 
-package org.mytoptag.model.dto;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.mytoptag.model.dto.query.TagCategorySuggestionQueryResult;
+package org.mytoptag.model.dto.query;
 
 /**
- * Tag suggestion dto.
+ * Tag suggestion query result for CategoryRepository#findRelevantTags response.
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class TagSuggestion {
-
-  private String tag;
-
-  private Integer count;
-
-  private String category;
-
-  private Integer sortOrder;
-
+public interface TagCategorySuggestionQueryResult {
 
   /**
-   * Ctor.
+   * Get category.
    *
-   * @param tagCategorySuggestionQueryResult {@link TagCategorySuggestionQueryResult}
+   * @return category title
    */
-  public TagSuggestion(final TagCategorySuggestionQueryResult tagCategorySuggestionQueryResult) {
-    this.tag = tagCategorySuggestionQueryResult.getTag();
-    this.count = tagCategorySuggestionQueryResult.getCount();
-    this.category = tagCategorySuggestionQueryResult.getCategory();
-    this.sortOrder = tagCategorySuggestionQueryResult.getSortOrder();
-  }
+  String getCategory();
+
+  /**
+   * Get tag.
+   *
+   * @return tag title
+   */
+  String getTag();
+
+  /**
+   * Get tag count.
+   *
+   * @return tag count
+   */
+  Integer getCount();
+
+  /**
+   * Get sort order.
+   *
+   * @return sort order;.
+   */
+  Integer getSortOrder();
+
 }
