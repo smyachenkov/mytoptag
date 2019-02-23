@@ -24,6 +24,8 @@
 
 package org.mytoptag.service;
 
+import org.mytoptag.model.Category;
+import org.mytoptag.model.dto.TagSuggestion;
 import org.mytoptag.model.dto.request.CategorizedTag;
 
 import java.util.List;
@@ -45,5 +47,13 @@ public interface CategoryService {
    * Clear category data.
    */
   void clear();
+
+  /**
+   * Get {@link Category} by name.
+   *
+   * @param title title of category
+   * @return list of all in category {@link TagSuggestion}
+   */
+  List<TagSuggestion> getCategoryTags(String title);
 
 }

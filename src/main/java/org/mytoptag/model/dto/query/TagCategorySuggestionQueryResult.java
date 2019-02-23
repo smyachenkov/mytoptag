@@ -44,13 +44,6 @@ public interface TagCategorySuggestionQueryResult {
   String getTag();
 
   /**
-   * Get tag count.
-   *
-   * @return tag count
-   */
-  Integer getCount();
-
-  /**
    * Get sort order.
    *
    * @return sort order;.

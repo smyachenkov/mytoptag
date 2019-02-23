@@ -58,6 +58,29 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
 
   /**
+   * Get all tags of a particular category.
+   *
+   * @param title exact category title.
+   * @return list of {@link TagCategorySuggestionQueryResult}
+   */
+  @Query(
+      value = "select \n"
+          + " cat.title \"category\",\n"
+          + " t.title \"tag\",\n"
+          + " tic.sort_order \"sortOrder\"\n"
+          + "from\n"
+          + "category cat \n"
+          + "join tagincategory tic\n"
+          + " on tic.category_id = cat.id\n"
+          + "join tag t\n"
+          + " on tic.tag_id = t.id\n"
+          + "where cat.title = :title\n"
+          + "order by cat.title asc, tic.sort_order asc",
+      nativeQuery = true
+  )
+  List<TagCategorySuggestionQueryResult> getCategoryTags(@Param("title")String title);
+
+  /**
    * Find relevant tags and categories.
    *
    * @param search search query for category title
@@ -67,7 +90,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
       value = "select \n"
           + " cat.title \"category\",\n"
           + " t.title \"tag\", \n"
-          + " tc.count \"count\",\n"
           + " tic.sort_order \"sortOrder\"\n"
           + "from\n"
           + "category cat \n"
@@ -75,9 +97,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
           + " on tic.category_id = cat.id\n"
           + "join tag t\n"
           + " on tic.tag_id = t.id\n"
-          + "left join tagcount tc\n"
-          + " on tc.tag_id = t.id\n"
-          + " and tc.count_date = (select max(count_date) from tagcount where tag_id = t.id)\n"
           + "where cat.title like %:search% \n"
           + "order by cat.title asc, tic.sort_order asc",
       nativeQuery = true
