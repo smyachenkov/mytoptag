@@ -178,8 +178,10 @@ public class SuggestionServiceImpl implements SuggestionService {
     inputResult.forEach((i, res) -> {
       suggestions.addAll(
           res.values().stream()
-              .flatMap(List::stream)
-              .limit(MAX_TAGS_FROM_SINGLE_CATEGORY)
+              .map(e -> e.stream()
+                  .limit(MAX_TAGS_FROM_SINGLE_CATEGORY)
+                  .collect(Collectors.toList())
+              ).flatMap(List::stream)
               .collect(Collectors.toList()));
     });
     return suggestions;
