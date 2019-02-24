@@ -63,8 +63,6 @@ public class SuggestionServiceImpl implements SuggestionService {
 
   private static final Integer MAX_CATEGORIES = 10;
 
-  private static final Integer MAX_TAGS_IN_CATEGORY = 10;
-
   private static final Integer MAX_TAGS_IN_POST = 30;
 
   private PostsOfTagRepository postsOfTagRepository;
@@ -176,7 +174,6 @@ public class SuggestionServiceImpl implements SuggestionService {
         suggestions.addAll(
             res.values().stream()
                 .flatMap(List::stream)
-                .limit(MAX_TAGS_IN_CATEGORY)
                 .collect(Collectors.toList()))
     );
     return suggestions.stream()
