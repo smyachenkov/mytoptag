@@ -42,6 +42,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -60,11 +61,11 @@ public class SuggestionServiceImpl implements SuggestionService {
 
   private static final Integer SCALE = 5;
 
-  private static final Integer MAX_NUMBER_IN_CATEGORY = 10;
+  private static final Integer MAX_CATEGORIES = 10;
 
-  private static final Integer MAX_NUMBER_IN_POST = 30;
+  private static final Integer MAX_TAGS_IN_CATEGORY = 10;
 
-  private static final Integer MAX_TAGS_FROM_SINGLE_CATEGORY = 5;
+  private static final Integer MAX_TAGS_IN_POST = 30;
 
   private PostsOfTagRepository postsOfTagRepository;
 
@@ -152,7 +153,7 @@ public class SuggestionServiceImpl implements SuggestionService {
    */
   public List<TagSuggestion> getRecommendations(final Set<String> input) {
     final Map<String, Map<String, List<TagSuggestion>>> inputResult = new HashMap<>();
-    input.forEach(i -> {
+    input.stream().limit(MAX_CATEGORIES).forEach(i -> {
       final List<TagCategorySuggestionQueryResult> queryResults = categoryRepository.findRelevantTags(i);
       final Map<String, List<TagSuggestion>> inputSearchResult =
           queryResults.stream()
@@ -164,27 +165,25 @@ public class SuggestionServiceImpl implements SuggestionService {
                       e -> e.getValue().stream().map(TagSuggestion::new).collect(Collectors.toList()),
                       (u, v) -> {
                         throw new IllegalStateException("Duplicate key");
-                        },
+                      },
                       LinkedHashMap::new
                   )
-             );
+              );
       inputResult.put(i, inputSearchResult);
     });
-    // todo log full search data
-    // todo limit final output to 30
-    // todo get 1 element from each input and each category until full
     final List<TagSuggestion> suggestions = new LinkedList<>();
-    // currently collects top 5 tags from each category
-    inputResult.forEach((i, res) -> {
-      suggestions.addAll(
-          res.values().stream()
-              .map(e -> e.stream()
-                  .limit(MAX_TAGS_FROM_SINGLE_CATEGORY)
-                  .collect(Collectors.toList())
-              ).flatMap(List::stream)
-              .collect(Collectors.toList()));
-    });
-    return suggestions;
+    inputResult.forEach((i, res) ->
+        suggestions.addAll(
+            res.values().stream()
+                .flatMap(List::stream)
+                .limit(MAX_TAGS_IN_CATEGORY)
+                .collect(Collectors.toList()))
+    );
+    return suggestions.stream()
+        .sorted(Comparator.comparing(TagSuggestion::getSortOrder))
+        .limit(MAX_TAGS_IN_POST)
+        .sorted(Comparator.comparing(TagSuggestion::getCategory))
+        .collect(Collectors.toList());
   }
 
 }

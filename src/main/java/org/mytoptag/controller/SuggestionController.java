@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -72,7 +72,7 @@ public class SuggestionController {
       method = RequestMethod.GET
   )
   public ListResponseEntity getRecommendations(@PathVariable("search") final List<String> search) {
-    return new ListResponseEntity(suggestionService.getRecommendations(new HashSet<>(search)));
+    return new ListResponseEntity(suggestionService.getRecommendations(new LinkedHashSet<>(search)));
   }
 
 }
