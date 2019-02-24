@@ -39,8 +39,6 @@ public class TagSuggestion {
 
   private String tag;
 
-  private Integer count;
-
   private String category;
 
   private Integer sortOrder;
@@ -53,7 +51,6 @@ public class TagSuggestion {
    */
   public TagSuggestion(final TagCategorySuggestionQueryResult tagCategorySuggestionQueryResult) {
     this.tag = tagCategorySuggestionQueryResult.getTag();
-    this.count = tagCategorySuggestionQueryResult.getCount();
     this.category = tagCategorySuggestionQueryResult.getCategory();
     this.sortOrder = tagCategorySuggestionQueryResult.getSortOrder();
   }

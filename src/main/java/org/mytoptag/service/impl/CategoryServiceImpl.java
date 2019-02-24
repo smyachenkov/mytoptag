@@ -29,6 +29,7 @@ import org.mytoptag.model.Category;
 import org.mytoptag.model.CategoryTag;
 import org.mytoptag.model.CategoryTagKey;
 import org.mytoptag.model.InstagramTag;
+import org.mytoptag.model.dto.TagSuggestion;
 import org.mytoptag.model.dto.request.CategorizedTag;
 import org.mytoptag.repository.CategoryRepository;
 import org.mytoptag.repository.CategoryTagRepository;
@@ -58,8 +59,8 @@ public class CategoryServiceImpl implements CategoryService {
   /**
    * Ctor.
    *
-   * @param categoryRepository {@link CategoryRepository}
-   * @param categoryTagRepository {@link CategoryTagRepository}
+   * @param categoryRepository     {@link CategoryRepository}
+   * @param categoryTagRepository  {@link CategoryTagRepository}
    * @param instagramTagRepository {@link InstagramTagRepository}
    */
   @Autowired
@@ -112,6 +113,14 @@ public class CategoryServiceImpl implements CategoryService {
         }
     );
 
+  }
+
+  @Override
+  public List<TagSuggestion> getCategoryTags(final String title) {
+    return categoryRepository.getCategoryTags(title)
+        .stream()
+        .map(TagSuggestion::new)
+        .collect(Collectors.toList());
   }
 
   @Override
